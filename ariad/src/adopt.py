@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import shutil
 from dataclasses import dataclass
@@ -35,11 +36,29 @@ class AdoptionPlanError(ValueError):
     """Raised when an adoption plan cannot be built."""
 
 
-def resolve_templates_root(ariad_root: str | Path) -> Path:
-    root = Path(ariad_root).expanduser().resolve()
-    if not root.exists() or not root.is_dir():
-        raise AdoptionPlanError(f"Ariad root does not exist or is not a directory: {root}")
+def resolve_ariad_root(ariad_root: str | Path | None) -> Path:
+    if ariad_root is not None:
+        root = Path(ariad_root).expanduser().resolve()
+        if not root.exists() or not root.is_dir():
+            raise AdoptionPlanError(f"Ariad root does not exist or is not a directory: {root}")
+        return root
 
+    env_root = os.environ.get("ARIAD_ROOT")
+    if env_root:
+        root = Path(env_root).expanduser().resolve()
+        if not root.exists() or not root.is_dir():
+            raise AdoptionPlanError(f"ARIAD_ROOT does not exist or is not a directory: {root}")
+        return root
+
+    default_root = (Path.home() / "ariad").resolve()
+    if default_root.exists() and default_root.is_dir():
+        return default_root
+
+    raise AdoptionPlanError("Ariad root is required. Pass --ariad-root PATH or set ARIAD_ROOT.")
+
+
+def resolve_templates_root(ariad_root: str | Path | None) -> Path:
+    root = resolve_ariad_root(ariad_root)
     templates_root = root / "docs" / "project-templates"
     if not templates_root.exists() or not templates_root.is_dir():
         raise AdoptionPlanError(f"Ariad project templates not found: {templates_root}")
@@ -159,7 +178,10 @@ def cmd_adopt(api, argv: list[str]) -> int:
     target = parser.add_mutually_exclusive_group(required=True)
     target.add_argument("--project-path", "--root", dest="project_path")
     target.add_argument("--journey", dest="journey_id")
-    parser.add_argument("--ariad-root", required=True, help="Canonical Ariad repository root")
+    parser.add_argument(
+        "--ariad-root",
+        help="Canonical Ariad repository root. Defaults to ARIAD_ROOT or ~/ariad.",
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",

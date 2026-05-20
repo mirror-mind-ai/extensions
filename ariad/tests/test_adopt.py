@@ -4,7 +4,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.adopt import apply_adoption_plan, build_adoption_plan, cmd_adopt, resolve_templates_root
+from src.adopt import (
+    apply_adoption_plan,
+    build_adoption_plan,
+    cmd_adopt,
+    resolve_ariad_root,
+    resolve_templates_root,
+)
 from tests.conftest import seed_journey
 
 
@@ -160,7 +166,44 @@ def test_cmd_adopt_write_mode_resolves_project_from_journey(ariad_api, tmp_path:
     assert (project / "AGENTS.md").exists()
 
 
-def test_cmd_adopt_errors_for_missing_ariad_root(ariad_api, tmp_path: Path, capsys):
+def test_explicit_ariad_root_wins_over_env(tmp_path: Path, monkeypatch):
+    explicit_root = make_ariad_root(tmp_path / "explicit")
+    env_root = make_ariad_root(tmp_path / "env")
+    monkeypatch.setenv("ARIAD_ROOT", str(env_root))
+
+    assert resolve_ariad_root(explicit_root) == explicit_root.resolve()
+
+
+def test_ariad_root_resolves_from_env(tmp_path: Path, monkeypatch):
+    env_root = make_ariad_root(tmp_path)
+    monkeypatch.setenv("ARIAD_ROOT", str(env_root))
+
+    assert resolve_ariad_root(None) == env_root.resolve()
+
+
+def test_ariad_root_resolves_from_home_default(tmp_path: Path, monkeypatch):
+    home = tmp_path / "home"
+    default_root = make_ariad_root(home)
+    monkeypatch.delenv("ARIAD_ROOT", raising=False)
+    monkeypatch.setattr(Path, "home", lambda: home)
+
+    assert resolve_ariad_root(None) == default_root.resolve()
+
+
+def test_cmd_adopt_errors_for_missing_ariad_root(ariad_api, tmp_path: Path, capsys, monkeypatch):
+    project = tmp_path / "project"
+    project.mkdir()
+    monkeypatch.delenv("ARIAD_ROOT", raising=False)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "home-without-ariad")
+
+    rc = cmd_adopt(ariad_api, ["--project-path", str(project), "--dry-run"])
+
+    captured = capsys.readouterr()
+    assert rc == 1
+    assert "Ariad root is required" in captured.err
+
+
+def test_cmd_adopt_errors_for_missing_explicit_ariad_root(ariad_api, tmp_path: Path, capsys):
     project = tmp_path / "project"
     project.mkdir()
 

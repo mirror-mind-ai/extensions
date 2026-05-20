@@ -14,6 +14,8 @@ uv run python -m memory ext ariad adopt \
   --ariad-root /path/to/ariad
 ```
 
+If `--ariad-root` is omitted, the command resolves the canonical repository from `ARIAD_ROOT`, then `~/ariad`.
+
 Or by journey:
 
 ```bash

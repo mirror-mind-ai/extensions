@@ -36,6 +36,8 @@ uv run python -m memory ext ariad adopt \
 
 Without `--dry-run`, the command copies only missing files. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
 
+If `--ariad-root` is omitted, the command resolves the canonical repository from `ARIAD_ROOT`, then `~/ariad`.
+
 ### `doctor`
 
 Checks whether a project has the minimum local Ariad surface needed for Builder Mode:
