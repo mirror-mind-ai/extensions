@@ -13,6 +13,12 @@ The first implemented command is a non-destructive readiness check:
 uv run python -m memory ext ariad doctor --project-path /path/to/project
 ```
 
+If the project is connected to a Mirror journey, prefer resolving it from the journey:
+
+```bash
+uv run python -m memory ext ariad doctor --journey <slug>
+```
+
 ## Current command
 
 ### `doctor`

@@ -12,6 +12,12 @@ This extension turns the manual Ariad adoption path into an operational Mirror c
 uv run python -m memory ext ariad doctor --project-path /path/to/project
 ```
 
+Or resolve the project from a Mirror journey's `project_path`:
+
+```bash
+uv run python -m memory ext ariad doctor --journey diario
+```
+
 Checks for:
 
 - consumer projects with a local Ariad instance:

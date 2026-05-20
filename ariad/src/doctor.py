@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -153,11 +154,54 @@ def render_report(report: DoctorReport) -> str:
     return "\n".join(lines) + "\n"
 
 
-def cmd_doctor(_api, argv: list[str]) -> int:
+class ProjectResolutionError(ValueError):
+    """Raised when a project path cannot be resolved for doctor."""
+
+
+def project_path_for_journey(api, journey_id: str) -> Path | None:
+    row = api.read(
+        "SELECT metadata FROM identity WHERE layer = 'journey' AND key = ?",
+        (journey_id,),
+    ).fetchone()
+    if row is None or not row["metadata"]:
+        return None
+    try:
+        metadata = json.loads(row["metadata"])
+    except (TypeError, json.JSONDecodeError):
+        return None
+    project_path = metadata.get("project_path")
+    if not isinstance(project_path, str) or not project_path.strip():
+        return None
+    return Path(project_path).expanduser().resolve()
+
+
+def resolve_project_path(api, *, project_path: str | None, journey_id: str | None) -> Path:
+    if project_path:
+        return Path(project_path).expanduser().resolve()
+    if journey_id:
+        resolved = project_path_for_journey(api, journey_id)
+        if resolved is None:
+            raise ProjectResolutionError(
+                f"journey '{journey_id}' has no project_path configured; "
+                f"run: python -m memory journey set-path {journey_id} /path/to/project"
+            )
+        return resolved
+    raise ProjectResolutionError("doctor requires --project-path PATH or --journey SLUG")
+
+
+def cmd_doctor(api, argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Inspect Ariad readiness for a project")
-    parser.add_argument("--project-path", "--root", dest="project_path", required=True)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--project-path", "--root", dest="project_path")
+    group.add_argument("--journey", dest="journey_id")
     args = parser.parse_args(argv)
 
-    report = inspect_project(Path(args.project_path))
+    try:
+        target = resolve_project_path(api, project_path=args.project_path, journey_id=args.journey_id)
+    except ProjectResolutionError as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 1
+
+    report = inspect_project(target)
     sys.stdout.write(render_report(report))
     return 0 if report.ok else 1

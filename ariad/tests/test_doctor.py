@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.doctor import cmd_doctor, inspect_project, render_report
+from tests.conftest import seed_journey
 
 
 def test_ready_project_passes(ready_project: Path):
@@ -127,3 +128,24 @@ def test_cmd_doctor_returns_one_for_not_ready_project(ariad_api, tmp_path: Path,
     out = capsys.readouterr().out
     assert rc == 1
     assert "Status: not ready" in out
+
+
+def test_cmd_doctor_resolves_project_path_from_journey(ariad_api, ready_project: Path, capsys):
+    seed_journey(ariad_api, "diario", ready_project)
+
+    rc = cmd_doctor(ariad_api, ["--journey", "diario"])
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert f"Project: {ready_project.resolve()}" in out
+    assert "Status: ready" in out
+
+
+def test_cmd_doctor_returns_error_when_journey_has_no_project_path(ariad_api, capsys):
+    seed_journey(ariad_api, "diario", None)
+
+    rc = cmd_doctor(ariad_api, ["--journey", "diario"])
+
+    captured = capsys.readouterr()
+    assert rc == 1
+    assert "has no project_path configured" in captured.err

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -43,3 +45,25 @@ def ready_project(tmp_path: Path) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"# {path.stem}\n", encoding="utf-8")
     return tmp_path
+
+
+def seed_journey(api: ExtensionAPI, journey_id: str, project_path: Path | None = None) -> None:
+    metadata = {}
+    if project_path is not None:
+        metadata["project_path"] = str(project_path)
+    now = datetime.now(timezone.utc).isoformat()
+    api.db.execute(
+        """
+        INSERT INTO identity (id, layer, key, content, created_at, updated_at, metadata)
+        VALUES (?, 'journey', ?, ?, ?, ?, ?)
+        """,
+        (
+            f"journey-{journey_id}",
+            journey_id,
+            f"Journey {journey_id}",
+            now,
+            now,
+            json.dumps(metadata) if metadata else None,
+        ),
+    )
+    api.db.commit()
