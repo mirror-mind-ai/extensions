@@ -14,12 +14,14 @@ uv run python -m memory ext ariad doctor --project-path /path/to/project
 
 Checks for:
 
-- `AGENTS.md` exists and mentions Ariad
-- `docs/process/development-guide.md`
-- `docs/project/briefing.md`
-- `docs/project/decisions.md`
-- `docs/project/roadmap/index.md`
-- `docs/product/principles.md`
+- consumer projects with a local Ariad instance:
+  - `AGENTS.md` exists and mentions Ariad
+  - `docs/process/development-guide.md`
+  - `docs/project/briefing.md`
+  - `docs/project/decisions.md`
+  - `docs/project/roadmap/index.md`
+  - `docs/product/principles.md`
+- canonical Ariad repositories, detected by method docs and project templates
 
 Example output:
 

@@ -15,6 +15,13 @@ REQUIRED_DOCS = (
     "docs/product/principles.md",
 )
 
+CANONICAL_MARKERS = (
+    "mkdocs.yml",
+    "docs/method/overview.md",
+    "docs/project-templates/AGENTS.md",
+    "docs/extension/index.md",
+)
+
 
 @dataclass(frozen=True)
 class Check:
@@ -29,6 +36,7 @@ class DoctorReport:
     exists: bool
     checks: tuple[Check, ...]
     warnings: tuple[str, ...]
+    canonical: bool = False
 
     @property
     def missing(self) -> tuple[str, ...]:
@@ -36,7 +44,11 @@ class DoctorReport:
 
     @property
     def ready(self) -> bool:
-        return self.exists and not self.missing and not self.warnings
+        return self.exists and not self.canonical and not self.missing and not self.warnings
+
+    @property
+    def ok(self) -> bool:
+        return self.ready or self.canonical
 
 
 def inspect_project(project_path: Path) -> DoctorReport:
@@ -47,6 +59,15 @@ def inspect_project(project_path: Path) -> DoctorReport:
             exists=False,
             checks=(),
             warnings=(f"Project path does not exist or is not a directory: {root}",),
+        )
+
+    if is_canonical_ariad_repo(root):
+        return DoctorReport(
+            project_path=root,
+            exists=True,
+            checks=(),
+            warnings=(),
+            canonical=True,
         )
 
     checks: list[Check] = []
@@ -84,12 +105,24 @@ def inspect_project(project_path: Path) -> DoctorReport:
     )
 
 
+def is_canonical_ariad_repo(root: Path) -> bool:
+    return all((root / marker).exists() for marker in CANONICAL_MARKERS)
+
+
 def render_report(report: DoctorReport) -> str:
     lines: list[str] = []
     lines.append("Ariad readiness report")
     lines.append("")
     lines.append(f"Project: {report.project_path}")
     lines.append("")
+
+    if report.canonical:
+        lines.append(
+            "This appears to be the canonical Ariad repository, not a local Ariad project instance."
+        )
+        lines.append("")
+        lines.append("Status: canonical")
+        return "\n".join(lines) + "\n"
 
     if not report.exists:
         lines.append("Status: not ready")
@@ -127,4 +160,4 @@ def cmd_doctor(_api, argv: list[str]) -> int:
 
     report = inspect_project(Path(args.project_path))
     sys.stdout.write(render_report(report))
-    return 0 if report.ready else 1
+    return 0 if report.ok else 1
