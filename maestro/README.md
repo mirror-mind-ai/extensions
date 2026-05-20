@@ -1,64 +1,133 @@
 # Maestro Extension
 
-Maestro is a Mirror-native coherence engine for project journeys.
+Maestro is the Mirror extension that operates the [Ariad](https://github.com/alissonvale/ariad) method.
 
-This hello-world extension ports the original TypeScript POC into the Mirror extension system. It keeps the project-local source of truth (`maestro.yml`, `docs/coherence/rules.md`, `docs/coherence/index.md`) while using Mirror's stateful extension infrastructure for CLI commands, check history, and Mirror Mode context injection.
+Ariad is a method for integral agentic development: human-agent development that keeps the work whole over time. Maestro is how Mirror Mind executes that method. The method lives in its own canonical repository; this extension turns it into operational Mirror capabilities.
 
-## Capabilities
+## Commands
 
-- CLI:
-  - `check`
-  - `init --name`
-  - `configure --locale --mode`
-- Mirror Mode:
-  - `coherence_status`, intended to bind to journeys
-- Storage:
-  - `ext_maestro_check_runs`
+### `init`
 
-## Current shape
+```bash
+uv run python -m memory ext maestro init \
+  --project-path /path/to/new-project
+```
+
+Initializes a project with the canonical Ariad templates. If the target directory does not exist, it is created. Existing files are preserved. Use `--dry-run` to preview without writing.
+
+### `adopt`
+
+```bash
+uv run python -m memory ext maestro adopt \
+  --project-path /path/to/project \
+  --ariad-root /path/to/ariad
+```
+
+If `--ariad-root` is omitted, the command resolves the canonical repository from `ARIAD_ROOT`, then `~/ariad`.
+
+Or by journey:
+
+```bash
+uv run python -m memory ext maestro adopt \
+  --journey diario \
+  --ariad-root /path/to/ariad
+```
+
+Preview without writing:
+
+```bash
+uv run python -m memory ext maestro adopt \
+  --journey diario \
+  --ariad-root /path/to/ariad \
+  --dry-run
+```
+
+Adopts the Ariad method by comparing the target project with canonical templates under:
 
 ```text
-journey/maestro
-  -> ~/Code/mirror-extensions/maestro
-  -> source-code development of this extension
-
-journey/sandbox-pet-store
-  -> ~/Code/sandbox-pet-store
-  -> example online pet food store built using Maestro
-
-~/.mirror/<user>/extensions/maestro
-  -> installed runtime loaded by Pi/Mirror
+<ariad-root>/docs/project-templates/
 ```
+
+In write mode, the command copies only missing templates. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
+
+### `doctor`
+
+```bash
+uv run python -m memory ext maestro doctor --project-path /path/to/project
+```
+
+Or resolve the project from a Mirror journey's `project_path`:
+
+```bash
+uv run python -m memory ext maestro doctor --journey diario
+```
+
+Checks for:
+
+- consumer projects with a local Ariad instance:
+  - `AGENTS.md` exists and mentions Ariad
+  - `docs/process/development-guide.md`
+  - `docs/project/briefing.md`
+  - `docs/project/decisions.md`
+  - `docs/project/roadmap/index.md`
+  - `docs/product/principles.md`
+- canonical Ariad repositories, detected by method docs and project templates
+
+Example output:
+
+```text
+Ariad readiness report
+
+Project: /path/to/project
+
+✅ AGENTS.md — exists and mentions Ariad
+✅ docs/process/development-guide.md — exists
+✅ docs/project/briefing.md — exists
+✅ docs/project/decisions.md — exists
+✅ docs/project/roadmap/index.md — exists
+✅ docs/product/principles.md — exists
+
+Status: ready
+```
+
+The command is read-only. It reports readiness, missing files, and warnings. When a project exists but is not ready, it suggests the corresponding `adopt --dry-run` next step.
+
+### `update`
+
+```bash
+uv run python -m memory ext maestro update --journey diario
+```
+
+Compares a local Ariad instance with the canonical templates. This command is report-only: it lists missing local files, files that differ from canonical, and files that are up to date. It does not overwrite or merge.
 
 ## Install
 
-From the Mirror Mind checkout:
-
 ```bash
 uv run python -m memory extensions install maestro \
-  --extensions-root ~/Code/mirror-extensions
+  --extensions-root /path/to/mirror-extensions \
+  --mirror-home ~/.mirror-minds/<user>
 ```
 
-## Quick setup for a journey
+## Status
 
-```bash
-uv run python -m memory journey set-path sandbox-pet-store ~/Code/sandbox-pet-store
-uv run python -m memory ext maestro bind coherence_status --journey sandbox-pet-store
-uv run python -m memory ext maestro configure --journey sandbox-pet-store --locale pt-BR --mode technical
-uv run python -m memory ext maestro init --journey sandbox-pet-store --name "Sandbox"
-uv run python -m memory ext maestro check --journey sandbox-pet-store
-```
+Implemented:
 
-## Documentation
+- `doctor` — read-only readiness check with `adopt --dry-run` next-step guidance
+- `adopt` — copy missing templates without overwriting existing files
+- `adopt --dry-run` — read-only adoption plan
+- `init` — create a new Ariad-ready project safely
+- `update` — report-only comparison against canonical templates
 
-- [Architecture](docs/architecture.md) — source/runtime/target project separation and data flow.
-- [Bindings](docs/bindings.md) — journey `project_path` vs extension capability binding.
-- [Commands](docs/commands.md) — operational command reference.
-- [User Stories](docs/user-stories/) — implementation story trail.
+Planned later:
 
-## Design stance
+- `adopt` reconciliation mode — help merge/adapt existing local docs
+- `update` reconciliation mode — propose safe local updates without blind overwrite
 
-- The canonical coherence state lives in the target project.
-- Mirror's database stores history and makes context injectable.
-- Bindings are journey-first; personas will be orchestrated later by Maestro itself.
-- `AGENTS.md` is not touched automatically in this slice.
+## Relationship to Ariad
+
+| Surface | Lives in | Role |
+|---|---|---|
+| **Ariad** | `~/Code/ariad` (canonical repo) | The method: docs, templates, principles |
+| **Maestro** | This extension | The Mirror runtime that operates the method |
+
+Ariad does not depend on Mirror Mind. Maestro depends on both.

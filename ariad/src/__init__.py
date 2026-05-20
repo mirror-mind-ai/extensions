@@ -1,1 +1,0 @@
-"""Ariad extension helpers."""

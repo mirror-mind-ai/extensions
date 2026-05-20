@@ -1,1 +1,1 @@
-"""Maestro extension package."""
+"""Ariad extension helpers."""

@@ -1,89 +1,82 @@
 ---
 name: "ext-maestro"
-description: Coherence engine for Mirror-native project journeys.
-user-invocable: true
+description: Mirror extension that operates the Ariad method (init, adopt, doctor, update)
 ---
 
-# /mm-maestro
+# Maestro Extension
 
-Operate the Maestro coherence layer for the active journey project.
+Maestro is the Mirror Mind extension that operates the [Ariad](https://github.com/alissonvale/ariad) method.
 
-## Purpose
+Ariad is the canonical method (lives in its own repository). Maestro is how Mirror executes it: bootstrapping projects, adopting the method in existing ones, diagnosing readiness for Builder Mode, and comparing local instances against the canonical templates.
 
-Maestro keeps project coherence visible before implementation work. The hello-world lens checks two base Units of Coherence (UoCs):
+Use this skill when the user asks to inspect whether a project is ready for Builder Mode, adopt Ariad in a project, initialize Ariad project docs, or diagnose drift between a local Ariad instance and the canonical method.
 
-- `project.working_name` — every Maestro project has a provisional working name (blocking)
-- `project.git_repository` — every Maestro project should be tracked in git (important)
-
-The source of truth lives in the project:
-
-- `maestro.yml`
-- `docs/coherence/rules.md`
-- `docs/coherence/index.md`
-
-The extension records check summaries in `ext_maestro_check_runs`.
-
-## Journey/project mapping
-
-Maestro uses two independent links:
-
-1. `journey -> project_path`: which folder represents the journey.
-2. `maestro/coherence_status -> journey/<id>`: which journey receives automatic coherence context in Mirror Mode.
-
-Current mappings:
-
-```text
-journey/maestro          -> ~/Code/mirror-extensions/maestro
-journey/sandbox-pet-store -> ~/Code/sandbox-pet-store
-```
-
-The installed runtime is separate:
-
-```text
-~/.mirror/<user>/extensions/maestro
-```
-
-Do not confuse runtime copy with source code or target project.
-
-## Commands
+Implemented commands are safe by default — they never overwrite existing files:
 
 ```bash
-uv run python -m memory ext maestro check --journey maestro
-uv run python -m memory ext maestro configure --journey maestro --locale pt-BR --mode technical
-uv run python -m memory ext maestro init --journey maestro --name "Maestro"
+uv run python -m memory ext maestro doctor --project-path /path/to/project
+uv run python -m memory ext maestro init --project-path /path/to/new-project
+uv run python -m memory ext maestro adopt --project-path /path/to/project --ariad-root /path/to/ariad
+uv run python -m memory ext maestro adopt --project-path /path/to/project --ariad-root /path/to/ariad --dry-run
+uv run python -m memory ext maestro update --project-path /path/to/project
 ```
 
-If working outside a journey, pass `--root`:
+If the project is connected to a Mirror journey, prefer resolving it from the journey:
 
 ```bash
-uv run python -m memory ext maestro check --root /path/to/project
+uv run python -m memory ext maestro doctor --journey <slug>
 ```
 
-## Mirror Mode binding
+## Current commands
 
-Bind the capability to any journey that should receive automatic coherence status:
+### `init`
+
+Initializes a project with the canonical Ariad templates:
 
 ```bash
-uv run python -m memory ext maestro bind coherence_status --journey maestro
-uv run python -m memory ext maestro bind coherence_status --journey sandbox-pet-store
+uv run python -m memory ext maestro init --project-path /path/to/new-project
 ```
 
-The provider always injects when the active journey is bound and the project path is configured. It never raises into Mirror Mode; failures return no block and are logged.
+Use `--dry-run` to preview. Existing files are preserved.
 
-## Docs
+### `adopt`
 
-Detailed docs live in:
+Adopts the Ariad method by comparing a target project with the canonical Ariad templates:
 
-- `docs/architecture.md`
-- `docs/bindings.md`
-- `docs/commands.md`
+```bash
+uv run python -m memory ext maestro adopt \
+  --journey <slug> \
+  --ariad-root /path/to/ariad \
+  --dry-run
+```
 
-## Operating protocol
+Without `--dry-run`, the command copies only missing files. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
 
-When the user asks for Maestro work:
+If `--ariad-root` is omitted, the command resolves the canonical repository from `ARIAD_ROOT`, then `~/ariad`.
 
-1. Run `check` for the active journey.
-2. If a blocking UoC is open, surface it before implementation work.
-3. Treat gaps as requests for judgment, not automatic errors.
-4. Do not edit `AGENTS.md` yet. That contract is intentionally left open.
-5. When a UoC changes, let the command update `docs/coherence/index.md`.
+### `update`
+
+Compares a local Ariad instance with canonical templates:
+
+```bash
+uv run python -m memory ext maestro update --journey <slug>
+```
+
+The command is report-only. It does not overwrite or merge files.
+
+### `doctor`
+
+Checks whether a project has the minimum local Ariad surface needed for Builder Mode:
+
+- `AGENTS.md` exists and mentions Ariad
+- `docs/process/development-guide.md` exists
+- `docs/project/briefing.md` exists
+- `docs/project/decisions.md` exists
+- `docs/project/roadmap/index.md` exists
+- `docs/product/principles.md` exists
+
+The command is read-only. It reports readiness, missing files, and warnings. When a project exists but is not ready, it suggests the corresponding `adopt --dry-run` next step.
+
+## Driver behavior
+
+The command layer provides deterministic inspection only. The Driver remains responsible for reading the project, interpreting the result, proposing reconciliation, and stopping for Navigator review before editing meaningful project content.
