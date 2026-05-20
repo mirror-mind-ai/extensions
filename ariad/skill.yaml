@@ -1,0 +1,20 @@
+id: ariad
+name: Ariad
+category: extension
+kind: command-skill
+summary: Ariad project adoption and readiness tooling for Mirror Builder Mode.
+table_prefix: ext_ariad_
+
+entrypoint:
+  module: extension
+
+runtimes:
+  pi:
+    command_name: ext-ariad
+    skill_file: SKILL.md
+  claude:
+    command_name: ext:ariad
+    skill_file: SKILL.md
+
+requires:
+  extension_api: ">=1.0,<2.0"
