@@ -7,10 +7,11 @@ description: Ariad project readiness and adoption support
 
 Use this skill when the user asks to inspect whether a project is ready for Ariad Builder Mode, adopt Ariad in a project, initialize Ariad project docs, or diagnose drift between a local Ariad instance and the canonical method.
 
-The first implemented command is a non-destructive readiness check:
+Implemented commands are non-destructive:
 
 ```bash
 uv run python -m memory ext ariad doctor --project-path /path/to/project
+uv run python -m memory ext ariad adopt --project-path /path/to/project --ariad-root /path/to/ariad --dry-run
 ```
 
 If the project is connected to a Mirror journey, prefer resolving it from the journey:
@@ -19,7 +20,20 @@ If the project is connected to a Mirror journey, prefer resolving it from the jo
 uv run python -m memory ext ariad doctor --journey <slug>
 ```
 
-## Current command
+## Current commands
+
+### `adopt --dry-run`
+
+Plans adoption by comparing a target project with the canonical Ariad templates:
+
+```bash
+uv run python -m memory ext ariad adopt \
+  --journey <slug> \
+  --ariad-root /path/to/ariad \
+  --dry-run
+```
+
+The command is read-only. It reports what it would create and what it would not overwrite.
 
 ### `doctor`
 
