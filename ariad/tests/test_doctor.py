@@ -130,6 +130,24 @@ def test_cmd_doctor_returns_one_for_not_ready_project(ariad_api, tmp_path: Path,
     assert "Status: not ready" in out
 
 
+def test_cmd_doctor_not_ready_project_suggests_adopt_dry_run(ariad_api, tmp_path: Path, capsys):
+    rc = cmd_doctor(ariad_api, ["--project-path", str(tmp_path)])
+
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Next step:" in out
+    assert f"--project-path {tmp_path.resolve()} --dry-run" in out
+
+
+def test_cmd_doctor_ready_project_does_not_suggest_next_step(ariad_api, ready_project: Path, capsys):
+    rc = cmd_doctor(ariad_api, ["--project-path", str(ready_project)])
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Status: ready" in out
+    assert "Next step:" not in out
+
+
 def test_cmd_doctor_resolves_project_path_from_journey(ariad_api, ready_project: Path, capsys):
     seed_journey(ariad_api, "diario", ready_project)
 
@@ -139,6 +157,47 @@ def test_cmd_doctor_resolves_project_path_from_journey(ariad_api, ready_project:
     assert rc == 0
     assert f"Project: {ready_project.resolve()}" in out
     assert "Status: ready" in out
+
+
+def test_cmd_doctor_journey_not_ready_suggests_adopt_dry_run(ariad_api, tmp_path: Path, capsys):
+    seed_journey(ariad_api, "empty", tmp_path)
+
+    rc = cmd_doctor(ariad_api, ["--journey", "empty"])
+
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Next step:" in out
+    assert "--journey empty --dry-run" in out
+
+
+def test_cmd_doctor_canonical_project_does_not_suggest_next_step(ariad_api, tmp_path: Path, capsys):
+    for rel_path in (
+        "mkdocs.yml",
+        "docs/method/overview.md",
+        "docs/project-templates/AGENTS.md",
+        "docs/extension/index.md",
+    ):
+        path = tmp_path / rel_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# marker\n", encoding="utf-8")
+
+    rc = cmd_doctor(ariad_api, ["--project-path", str(tmp_path)])
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Status: canonical" in out
+    assert "Next step:" not in out
+
+
+def test_cmd_doctor_missing_project_path_does_not_suggest_next_step(ariad_api, tmp_path: Path, capsys):
+    missing = tmp_path / "missing"
+
+    rc = cmd_doctor(ariad_api, ["--project-path", str(missing)])
+
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Project path does not exist" in out
+    assert "Next step:" not in out
 
 
 def test_cmd_doctor_returns_error_when_journey_has_no_project_path(ariad_api, capsys):

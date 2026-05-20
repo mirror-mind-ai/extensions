@@ -93,7 +93,7 @@ uv run python -m memory extensions install ariad \
 
 Implemented:
 
-- `doctor` — read-only readiness check
+- `doctor` — read-only readiness check with `adopt --dry-run` next-step guidance
 - `adopt` — copy missing templates without overwriting existing files
 - `adopt --dry-run` — read-only adoption plan
 

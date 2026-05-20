@@ -49,7 +49,7 @@ Checks whether a project has the minimum local Ariad surface needed for Builder 
 - `docs/project/roadmap/index.md` exists
 - `docs/product/principles.md` exists
 
-The command is read-only. It reports readiness, missing files, and warnings.
+The command is read-only. It reports readiness, missing files, and warnings. When a project exists but is not ready, it suggests the corresponding `adopt --dry-run` next step.
 
 ## Driver behavior
 

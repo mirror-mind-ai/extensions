@@ -110,7 +110,7 @@ def is_canonical_ariad_repo(root: Path) -> bool:
     return all((root / marker).exists() for marker in CANONICAL_MARKERS)
 
 
-def render_report(report: DoctorReport) -> str:
+def render_report(report: DoctorReport, *, next_step: str | None = None) -> str:
     lines: list[str] = []
     lines.append("Ariad readiness report")
     lines.append("")
@@ -151,6 +151,10 @@ def render_report(report: DoctorReport) -> str:
 
     lines.append("")
     lines.append(f"Status: {'ready' if report.ready else 'not ready'}")
+    if next_step and report.exists and not report.ready and not report.canonical:
+        lines.append("")
+        lines.append("Next step:")
+        lines.append(f"  {next_step}")
     return "\n".join(lines) + "\n"
 
 
@@ -202,6 +206,18 @@ def cmd_doctor(api, argv: list[str]) -> int:
         sys.stderr.write(f"{exc}\n")
         return 1
 
+    next_step = None
+    if args.project_path:
+        next_step = (
+            "uv run python -m memory ext ariad adopt "
+            f"--project-path {target} --dry-run"
+        )
+    elif args.journey_id:
+        next_step = (
+            "uv run python -m memory ext ariad adopt "
+            f"--journey {args.journey_id} --dry-run"
+        )
+
     report = inspect_project(target)
-    sys.stdout.write(render_report(report))
+    sys.stdout.write(render_report(report, next_step=next_step))
     return 0 if report.ok else 1
