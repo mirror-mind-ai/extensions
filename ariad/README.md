@@ -6,16 +6,23 @@ This extension turns the manual Ariad adoption path into an operational Mirror c
 
 ## Commands
 
-### `adopt --dry-run`
+### `adopt`
 
 ```bash
 uv run python -m memory ext ariad adopt \
   --project-path /path/to/project \
-  --ariad-root /path/to/ariad \
-  --dry-run
+  --ariad-root /path/to/ariad
 ```
 
 Or by journey:
+
+```bash
+uv run python -m memory ext ariad adopt \
+  --journey diario \
+  --ariad-root /path/to/ariad
+```
+
+Preview without writing:
 
 ```bash
 uv run python -m memory ext ariad adopt \
@@ -24,13 +31,13 @@ uv run python -m memory ext ariad adopt \
   --dry-run
 ```
 
-Plans adoption by comparing the target project with canonical templates under:
+Adopts Ariad by comparing the target project with canonical templates under:
 
 ```text
 <ariad-root>/docs/project-templates/
 ```
 
-The command is read-only in this first slice. It reports what it would create and what it would not overwrite.
+In write mode, the command copies only missing templates. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
 
 ### `doctor`
 
@@ -85,10 +92,11 @@ uv run python -m memory extensions install ariad \
 Implemented:
 
 - `doctor` — read-only readiness check
+- `adopt` — copy missing templates without overwriting existing files
 - `adopt --dry-run` — read-only adoption plan
 
 Planned later:
 
 - `init` — create a new Ariad-ready project
-- `adopt` write mode — copy missing templates without blind overwrite
+- `adopt` reconciliation mode — help merge/adapt existing local docs
 - `update` — reconcile local Ariad instance with the canonical method

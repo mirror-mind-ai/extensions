@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -20,6 +21,14 @@ class AdoptionPlan:
     templates_root: Path
     would_create: tuple[str, ...]
     would_not_overwrite: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class AdoptionResult:
+    project_path: Path
+    templates_root: Path
+    created: tuple[str, ...]
+    skipped_existing: tuple[str, ...]
 
 
 class AdoptionPlanError(ValueError):
@@ -72,6 +81,23 @@ def build_adoption_plan(project_path: Path, templates_root: Path) -> AdoptionPla
     )
 
 
+def apply_adoption_plan(plan: AdoptionPlan) -> AdoptionResult:
+    created: list[str] = []
+    for rel_path in plan.would_create:
+        source = plan.templates_root / rel_path
+        target = plan.project_path / rel_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        created.append(rel_path)
+
+    return AdoptionResult(
+        project_path=plan.project_path,
+        templates_root=plan.templates_root,
+        created=tuple(created),
+        skipped_existing=plan.would_not_overwrite,
+    )
+
+
 def render_plan(plan: AdoptionPlan) -> str:
     lines: list[str] = []
     lines.append("Ariad adoption plan")
@@ -100,6 +126,34 @@ def render_plan(plan: AdoptionPlan) -> str:
     return "\n".join(lines) + "\n"
 
 
+def render_result(result: AdoptionResult) -> str:
+    lines: list[str] = []
+    lines.append("Ariad adoption result")
+    lines.append("")
+    lines.append(f"Project: {result.project_path}")
+    lines.append(f"Canonical templates: {result.templates_root}")
+    lines.append("")
+
+    lines.append("Created:")
+    if result.created:
+        for rel_path in result.created:
+            lines.append(f"- {rel_path}")
+    else:
+        lines.append("- (none)")
+
+    lines.append("")
+    lines.append("Skipped existing:")
+    if result.skipped_existing:
+        for rel_path in result.skipped_existing:
+            lines.append(f"- {rel_path}")
+    else:
+        lines.append("- (none)")
+
+    lines.append("")
+    lines.append("Mode: write (existing files preserved)")
+    return "\n".join(lines) + "\n"
+
+
 def cmd_adopt(api, argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Plan Ariad adoption for a project")
     target = parser.add_mutually_exclusive_group(required=True)
@@ -109,13 +163,9 @@ def cmd_adopt(api, argv: list[str]) -> int:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Required for this first slice. Report planned changes without writing files.",
+        help="Report planned changes without writing files.",
     )
     args = parser.parse_args(argv)
-
-    if not args.dry_run:
-        sys.stderr.write("adopt currently requires --dry-run; no write mode is implemented yet\n")
-        return 1
 
     try:
         project = resolve_project_path(
@@ -129,5 +179,9 @@ def cmd_adopt(api, argv: list[str]) -> int:
         sys.stderr.write(f"{exc}\n")
         return 1
 
-    sys.stdout.write(render_plan(plan))
+    if args.dry_run:
+        sys.stdout.write(render_plan(plan))
+    else:
+        result = apply_adoption_plan(plan)
+        sys.stdout.write(render_result(result))
     return 0

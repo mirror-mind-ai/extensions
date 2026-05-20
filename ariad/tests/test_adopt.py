@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.adopt import build_adoption_plan, cmd_adopt, resolve_templates_root
+from src.adopt import apply_adoption_plan, build_adoption_plan, cmd_adopt, resolve_templates_root
 from tests.conftest import seed_journey
 
 
@@ -87,16 +87,77 @@ def test_cmd_adopt_resolves_project_from_journey(ariad_api, tmp_path: Path, caps
     assert f"Project: {project.resolve()}" in out
 
 
-def test_cmd_adopt_requires_dry_run(ariad_api, tmp_path: Path, capsys):
+def test_apply_adoption_plan_creates_missing_templates(tmp_path: Path):
+    ariad_root = make_ariad_root(tmp_path)
+    project = tmp_path / "project"
+    project.mkdir()
+    plan = build_adoption_plan(project, resolve_templates_root(ariad_root))
+
+    result = apply_adoption_plan(plan)
+
+    assert "AGENTS.md" in result.created
+    assert (project / "AGENTS.md").exists()
+    assert (project / "docs" / "process" / "development-guide.md").exists()
+    assert not (project / "index.md").exists()
+
+
+def test_apply_adoption_plan_preserves_existing_files(tmp_path: Path):
+    ariad_root = make_ariad_root(tmp_path)
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / "AGENTS.md").write_text("existing\n", encoding="utf-8")
+    plan = build_adoption_plan(project, resolve_templates_root(ariad_root))
+
+    result = apply_adoption_plan(plan)
+
+    assert "AGENTS.md" in result.skipped_existing
+    assert (project / "AGENTS.md").read_text(encoding="utf-8") == "existing\n"
+    assert (project / "docs" / "process" / "development-guide.md").exists()
+
+
+def test_cmd_adopt_write_mode_reports_created_files(ariad_api, tmp_path: Path, capsys):
     ariad_root = make_ariad_root(tmp_path)
     project = tmp_path / "project"
     project.mkdir()
 
     rc = cmd_adopt(ariad_api, ["--project-path", str(project), "--ariad-root", str(ariad_root)])
 
-    captured = capsys.readouterr()
-    assert rc == 1
-    assert "requires --dry-run" in captured.err
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Ariad adoption result" in out
+    assert "Created:" in out
+    assert "Mode: write" in out
+    assert (project / "AGENTS.md").exists()
+
+
+def test_cmd_adopt_dry_run_does_not_write(ariad_api, tmp_path: Path, capsys):
+    ariad_root = make_ariad_root(tmp_path)
+    project = tmp_path / "project"
+    project.mkdir()
+
+    rc = cmd_adopt(
+        ariad_api,
+        ["--project-path", str(project), "--ariad-root", str(ariad_root), "--dry-run"],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Mode: dry-run" in out
+    assert not (project / "AGENTS.md").exists()
+
+
+def test_cmd_adopt_write_mode_resolves_project_from_journey(ariad_api, tmp_path: Path, capsys):
+    ariad_root = make_ariad_root(tmp_path)
+    project = tmp_path / "project"
+    project.mkdir()
+    seed_journey(ariad_api, "diario", project)
+
+    rc = cmd_adopt(ariad_api, ["--journey", "diario", "--ariad-root", str(ariad_root)])
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert f"Project: {project.resolve()}" in out
+    assert (project / "AGENTS.md").exists()
 
 
 def test_cmd_adopt_errors_for_missing_ariad_root(ariad_api, tmp_path: Path, capsys):

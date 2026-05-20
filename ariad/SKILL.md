@@ -11,6 +11,7 @@ Implemented commands are non-destructive:
 
 ```bash
 uv run python -m memory ext ariad doctor --project-path /path/to/project
+uv run python -m memory ext ariad adopt --project-path /path/to/project --ariad-root /path/to/ariad
 uv run python -m memory ext ariad adopt --project-path /path/to/project --ariad-root /path/to/ariad --dry-run
 ```
 
@@ -22,9 +23,9 @@ uv run python -m memory ext ariad doctor --journey <slug>
 
 ## Current commands
 
-### `adopt --dry-run`
+### `adopt`
 
-Plans adoption by comparing a target project with the canonical Ariad templates:
+Adopts Ariad by comparing a target project with the canonical Ariad templates:
 
 ```bash
 uv run python -m memory ext ariad adopt \
@@ -33,7 +34,7 @@ uv run python -m memory ext ariad adopt \
   --dry-run
 ```
 
-The command is read-only. It reports what it would create and what it would not overwrite.
+Without `--dry-run`, the command copies only missing files. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
 
 ### `doctor`
 
