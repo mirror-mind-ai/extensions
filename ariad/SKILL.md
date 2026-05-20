@@ -11,8 +11,10 @@ Implemented commands are non-destructive:
 
 ```bash
 uv run python -m memory ext ariad doctor --project-path /path/to/project
+uv run python -m memory ext ariad init --project-path /path/to/new-project
 uv run python -m memory ext ariad adopt --project-path /path/to/project --ariad-root /path/to/ariad
 uv run python -m memory ext ariad adopt --project-path /path/to/project --ariad-root /path/to/ariad --dry-run
+uv run python -m memory ext ariad update --project-path /path/to/project
 ```
 
 If the project is connected to a Mirror journey, prefer resolving it from the journey:
@@ -22,6 +24,16 @@ uv run python -m memory ext ariad doctor --journey <slug>
 ```
 
 ## Current commands
+
+### `init`
+
+Initializes a project with the canonical Ariad templates:
+
+```bash
+uv run python -m memory ext ariad init --project-path /path/to/new-project
+```
+
+Use `--dry-run` to preview. Existing files are preserved.
 
 ### `adopt`
 
@@ -37,6 +49,16 @@ uv run python -m memory ext ariad adopt \
 Without `--dry-run`, the command copies only missing files. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
 
 If `--ariad-root` is omitted, the command resolves the canonical repository from `ARIAD_ROOT`, then `~/ariad`.
+
+### `update`
+
+Compares a local Ariad instance with canonical templates:
+
+```bash
+uv run python -m memory ext ariad update --journey <slug>
+```
+
+The command is report-only. It does not overwrite or merge files.
 
 ### `doctor`
 

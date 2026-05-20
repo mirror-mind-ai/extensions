@@ -6,6 +6,15 @@ This extension turns the manual Ariad adoption path into an operational Mirror c
 
 ## Commands
 
+### `init`
+
+```bash
+uv run python -m memory ext ariad init \
+  --project-path /path/to/new-project
+```
+
+Initializes a project with the canonical Ariad templates. If the target directory does not exist, it is created. Existing files are preserved. Use `--dry-run` to preview without writing.
+
 ### `adopt`
 
 ```bash
@@ -89,6 +98,14 @@ uv run python -m memory extensions install ariad \
   --mirror-home ~/.mirror-minds/<user>
 ```
 
+### `update`
+
+```bash
+uv run python -m memory ext ariad update --journey diario
+```
+
+Compares a local Ariad instance with the canonical templates. This command is report-only: it lists missing local files, files that differ from canonical, and files that are up to date. It does not overwrite or merge.
+
 ## Status
 
 Implemented:
@@ -96,9 +113,10 @@ Implemented:
 - `doctor` — read-only readiness check with `adopt --dry-run` next-step guidance
 - `adopt` — copy missing templates without overwriting existing files
 - `adopt --dry-run` — read-only adoption plan
+- `init` — create a new Ariad-ready project safely
+- `update` — report-only comparison against canonical templates
 
 Planned later:
 
-- `init` — create a new Ariad-ready project
 - `adopt` reconciliation mode — help merge/adapt existing local docs
-- `update` — reconcile local Ariad instance with the canonical method
+- `update` reconciliation mode — propose safe local updates without blind overwrite
