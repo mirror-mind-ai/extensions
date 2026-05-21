@@ -4,6 +4,22 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Ariad preferences are defaults, not method invariants
+
+**Date:** 2026-05-21
+**Status:** Decided
+
+Decision: Maestro should preserve the distinction between Ariad's method contract and Navigator preference defaults.
+
+Rationale: Ariad needs an opinionated out-of-the-box posture, but not every recommended habit should become a universal law. Commit frequency, push rhythm, checkpoint compression, worklog detail, branch habits, and pull request rules depend on the Navigator, team, or project.
+
+Consequences:
+
+- Ariad defaults should be treated as recommended starting preferences.
+- Maestro overlay configuration should make preferences explicit when possible.
+- A personal process habit should not be promoted to repository contract unless explicitly requested.
+- Future overlay work may add commit, push, worklog, documentation detail, branch, and PR policies.
+
 ### Ariad has repository adoption and workspace overlay modes
 
 **Date:** 2026-05-20

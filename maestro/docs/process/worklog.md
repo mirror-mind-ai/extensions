@@ -4,6 +4,14 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-21 — Method contract and Navigator preferences clarified
+
+The Maestro docs now distinguish Ariad's method contract from Navigator preference defaults and local overrides.
+
+This matters because Maestro should not treat every good habit as a universal Ariad invariant. Ariad can ship with opinionated defaults while still allowing advanced Navigators to customize local behavior.
+
+Follow-up: add explicit overlay policies for commit, push, worklog, documentation detail, branch, and pull request habits after the canonical Ariad docs stabilize this distinction.
+
 ### 2026-05-20 — Workspace overlay implemented
 
 Maestro now distinguishes repository adoption from workspace overlay.

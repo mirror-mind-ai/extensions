@@ -6,7 +6,7 @@ Ariad is a method for integral agentic development: human-agent development that
 
 ## Contract Modes
 
-Maestro distinguishes two ways Ariad can be present in work.
+Maestro distinguishes how Ariad is present in work and where its authority comes from.
 
 ### Repository adoption
 
@@ -15,6 +15,14 @@ Repository adoption means the project itself declares Ariad as part of its publi
 Use repository adoption when everyone who works in that repository should see Ariad as part of the project contract.
 
 Repository adoption may write missing template files, but never overwrites existing files.
+
+### Navigator preference defaults
+
+Ariad ships with opinionated Navigator preference defaults. These are recommended starting behaviors, not method invariants.
+
+Examples include full checkpoints for non-trivial work, ask-before-push, descriptive commit messages, small reviewable changes, and documentation updates when project truth changes.
+
+Advanced Navigators and projects can override these preferences explicitly.
 
 ### Workspace overlay
 
@@ -119,12 +127,14 @@ uv run python -m memory ext maestro unbind ariad_workspace --journey mirror-mind
 
 Overlay policies:
 
-| Policy | Values |
-|---|---|
-| `repo-contract-policy` | `do_not_modify`, `ask_before_change`, `allow_if_explicit` |
-| `doc-update-policy` | `project_relevant_only`, `ariad_required`, `manual_only` |
-| `checkpoint-policy` | `ariad_full`, `compressed_for_trivial`, `manual` |
-| `validation-policy` | `required`, `when_user_visible`, `manual` |
+| Policy | Values | Default |
+|---|---|---|
+| `repo-contract-policy` | `do_not_modify`, `ask_before_change`, `allow_if_explicit` | `do_not_modify` |
+| `doc-update-policy` | `project_relevant_only`, `ariad_required`, `manual_only` | `project_relevant_only` |
+| `checkpoint-policy` | `ariad_full`, `compressed_for_trivial`, `manual` | `ariad_full` |
+| `validation-policy` | `required`, `when_user_visible`, `manual` | `required` |
+
+These are the first Maestro-supported Navigator preferences. Future versions may add commit, push, worklog, documentation detail, branch, and pull request policies.
 
 When active, `memory build load <journey>` already receives the overlay instructions because Mirror's extension context mechanism injects capabilities bound to the active journey.
 
@@ -201,6 +211,7 @@ Planned later:
 | **Ariad** | `~/Code/ariad` (canonical repo) | The method: docs, templates, principles |
 | **Maestro** | This extension | The Mirror runtime that operates the method |
 | **Repository adoption** | Target project files | Public project contract |
-| **Workspace overlay** | Local Mirror extension state | Local runtime contract |
+| **Navigator preference defaults** | Ariad and Maestro defaults | Opinionated starting posture |
+| **Workspace overlay** | Local Mirror extension state | Local runtime contract plus configured preferences |
 
 Ariad does not depend on Mirror Mind. Maestro depends on both.

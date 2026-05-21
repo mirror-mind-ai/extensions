@@ -13,6 +13,12 @@ Use this skill when the user asks to inspect whether a project is ready for Buil
 
 ## Contract Modes
 
+Maestro distinguishes Ariad's method contract, repository contract, and Navigator preferences.
+
+Ariad has opinionated Navigator preference defaults. These defaults are recommended starting behaviors, not universal laws. Advanced Navigators may override preferences such as checkpoint compression, validation strictness, documentation detail, commit frequency, or push policy.
+
+Maestro currently supports the first overlay preference policies directly: repository contract policy, documentation update policy, checkpoint policy, and validation policy.
+
 Maestro distinguishes two contract modes.
 
 **Repository adoption** means the repository declares Ariad as part of its public agent contract. This is the mode that writes missing templates such as `AGENTS.md` and local project docs. Existing files are never overwritten.
@@ -120,3 +126,5 @@ Possible statuses:
 The command layer provides deterministic inspection and configuration. The Driver remains responsible for reading the project, interpreting the result, proposing reconciliation, and stopping for Navigator review before editing meaningful project content.
 
 When the user asks for local Ariad behavior without imposing Ariad on the repo, prefer `overlay`, not `adopt`.
+
+When the user states a personal process habit, treat it as a Navigator preference unless they explicitly say it is a repository rule. Examples: commit frequency, push frequency, checkpoint compression, worklog detail, branch habits, and pull request habits.

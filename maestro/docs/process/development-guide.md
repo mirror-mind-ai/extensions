@@ -79,7 +79,7 @@ For non-trivial work, follow the Ariad lifecycle:
 4. test and validate;
 5. review and refactoring assessment;
 6. document and coherence check;
-7. commit after Navigator confirmation.
+7. record project history according to the configured commit policy.
 
 ## Checkpoints
 
@@ -88,17 +88,26 @@ Stop for Navigator confirmation:
 - after the plan;
 - after tests and manual validation route;
 - after review/refactoring assessment;
-- before commit and push.
+- before recording project history unless the local commit policy says otherwise.
 
 Small mechanical fixes may compress the lifecycle, but should still report validation and changed files.
+
+## Navigator Preferences
+
+Use Ariad defaults unless this local guide or the Navigator says otherwise.
+
+- **Commit policy:** commit after a coherent story or meaningful change is validated and accepted.
+- **Push policy:** push only after Navigator authorization unless the session has explicitly authorized push.
+- **Checkpoint compression:** use compressed checkpoints only for trivial low-risk changes.
+- **Documentation detail:** update the smallest documentation surface that keeps the extension coherent.
+- **Worklog policy:** record meaningful milestones, not every edit.
+- **Branch/PR habits:** work on `main` for local extension development unless a review boundary needs a branch.
 
 ## Commit and Release Rules
 
 Use descriptive English commit messages explaining the why.
 
 Prefer small commits scoped to one extension behavior or documentation concern.
-
-Push only after Navigator authorization unless the session has explicitly authorized push.
 
 ## Local Exceptions
 

@@ -35,6 +35,19 @@ Move beyond report-only comparison when the right safe behavior is clear. Possib
 - propose patch files;
 - support a guided reconciliation workflow.
 
+### Navigator preference policies
+
+Expand workspace overlay beyond the current first policy set. Future policies may include:
+
+- commit policy;
+- push policy;
+- worklog policy;
+- documentation detail policy;
+- branch policy;
+- pull request policy.
+
+The goal is to preserve Ariad's opinionated defaults while letting advanced Navigators customize behavior without altering the repository contract.
+
 ### Template version awareness
 
 Track which canonical Ariad template state a project adopted. Candidate mechanisms:

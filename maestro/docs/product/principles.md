@@ -28,6 +28,12 @@ Maestro should never confuse a local operating preference with a public reposito
 
 A developer may use Ariad locally as a workspace overlay. A project may also adopt Ariad publicly through repository files. These are different authority levels and the interface should keep them visible.
 
+### Preferences are configurable, not canonical
+
+Maestro should help Ariad carry opinionated defaults without turning every default into a method invariant.
+
+Defaults reduce adoption friction. Overrides preserve local truth. The interface should show when behavior is an Ariad default and when it has been customized by the Navigator or project.
+
 ### Deterministic core, guided judgment
 
 Commands should be deterministic where the operation is mechanical: inspect files, copy missing templates, compare content.
