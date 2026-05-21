@@ -5,7 +5,7 @@ description: Mirror extension that operates the Ariad method (init, adopt, docto
 
 # Maestro Extension
 
-Maestro is the Mirror Mind extension that operates the [Ariad](https://github.com/alissonvale/ariad) method.
+Maestro is the Mirror Mind extension that operates the [Ariad](https://github.com/mirror-mind-ai/ariad) method.
 
 Ariad is the canonical method (lives in its own repository). Maestro is how Mirror executes it: bootstrapping projects, adopting the method in existing ones, diagnosing readiness for Builder Mode, and comparing local instances against the canonical templates.
 

@@ -14,7 +14,7 @@ Each subfolder is a self-contained extension. They install one at a
 time through the framework's standard CLI:
 
 ```bash
-git clone https://github.com/alissonvale/mirror-extensions ~/Code/mirror-extensions
+git clone https://github.com/mirror-mind-ai/extensions ~/Code/mirror-extensions
 
 python -m memory extensions install <extension-id> \
   --extensions-root ~/Code/mirror-extensions
@@ -30,7 +30,7 @@ when overriding the default.
 |---|---|---|
 | [`finances/`](finances/) | ✅ Complete (11/11 stories) | Personal and business finance tracking: accounts, transactions, balance snapshots, recurring bills, runway, monthly cash flow, and a `financial_summary` capability that injects live numbers into Mirror Mode for a finance-aware persona. Complete CLI surface: register accounts, record balance snapshots, manage recurring bills and categories, import bank statements (OFX) and credit card statements (CSV), list and filter transactions, compute burn and runway under different assumptions, and migrate from a legacy mirror SQLite database. See [`finances/docs/user-stories/`](finances/docs/user-stories/) for the full story trail. |
 | [`testimonials/`](testimonials/) | ✅ Complete (5/5 stories) | Customer testimonials with LLM-assisted structuring and semantic search. `add` accepts free text and uses the framework's LLM router to extract author, source, product, quotable highlight, and tags; `list` filters by product / author / source; `search` ranks by cosine similarity over embeddings; `migrate-legacy` imports a legacy archive with embeddings preserved verbatim; `recent_testimonials` injects semantically relevant testimonials into Mirror Mode for bound personas. See [`testimonials/docs/user-stories/`](testimonials/docs/user-stories/). |
-| [`maestro/`](maestro/) | 🚧 First operational slice | Mirror extension that operates the [Ariad](https://github.com/alissonvale/ariad) method (integral agentic development). Commands: `doctor` for Builder Mode readiness, `init` for new projects, `adopt` for existing ones (with safe write and `--dry-run`), `update` for report-only comparison against canonical templates. Ariad is the method (lives in its own canonical repo); Maestro is how Mirror runs it. |
+| [`maestro/`](maestro/) | 🚧 First operational slice | Mirror extension that operates the [Ariad](https://github.com/mirror-mind-ai/ariad) method (integral agentic development). Commands: `doctor` for Builder Mode readiness, `init` for new projects, `adopt` for existing ones (with safe write and `--dry-run`), `update` for report-only comparison against canonical templates. Ariad is the method (lives in its own canonical repo); Maestro is how Mirror runs it. |
 
 ## Requirements
 
