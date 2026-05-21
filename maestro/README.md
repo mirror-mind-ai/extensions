@@ -4,6 +4,30 @@ Maestro is the Mirror extension that operates the [Ariad](https://github.com/mir
 
 Ariad is a method for integral agentic development: human-agent development that keeps the work whole over time. Maestro is how Mirror Mind executes that method. The method lives in its own canonical repository; this extension turns it into operational Mirror capabilities.
 
+## Contract Modes
+
+Maestro distinguishes two ways Ariad can be present in work.
+
+### Repository adoption
+
+Repository adoption means the project itself declares Ariad as part of its public agent contract. The repository normally contains `AGENTS.md` plus the local project docs that make up a local Ariad instance.
+
+Use repository adoption when everyone who works in that repository should see Ariad as part of the project contract.
+
+Repository adoption may write missing template files, but never overwrites existing files.
+
+### Workspace overlay
+
+Workspace overlay means Ariad guides a local Mirror journey without changing the repository contract.
+
+Use workspace overlay when a developer wants Ariad to govern local Builder Mode conduct, checkpoints, validation, and coherence review, but the project should not publicly declare Ariad in `AGENTS.md`, `CLAUDE.md`, or equivalent files.
+
+Workspace overlay is stored in Maestro's local extension tables and injected into Mirror context through the `ariad_workspace` capability. Changing overlay properties changes the next loaded context immediately; no project files need to change.
+
+A useful boundary:
+
+> Ariad may govern local conduct. Project docs should record only truths about the project. Repository contract files should change only when repository adoption is explicitly desired.
+
 ## Commands
 
 ### `init`
@@ -50,6 +74,60 @@ Adopts the Ariad method by comparing the target project with canonical templates
 
 In write mode, the command copies only missing templates. Existing files are never overwritten. With `--dry-run`, it reports what it would create and what it would preserve without writing files.
 
+### `overlay`
+
+Configure Ariad as a local workspace overlay for a Mirror journey, without modifying the target repository.
+
+```bash
+uv run python -m memory ext maestro overlay enable \
+  --journey mirror-mind \
+  --ariad-root /path/to/ariad
+```
+
+Then bind the context capability to the journey:
+
+```bash
+uv run python -m memory ext maestro bind ariad_workspace --journey mirror-mind
+```
+
+Check status:
+
+```bash
+uv run python -m memory ext maestro overlay status --journey mirror-mind
+```
+
+Change contract properties:
+
+```bash
+uv run python -m memory ext maestro overlay set \
+  --journey mirror-mind \
+  --repo-contract-policy ask_before_change \
+  --checkpoint-policy compressed_for_trivial
+```
+
+Disable the overlay configuration:
+
+```bash
+uv run python -m memory ext maestro overlay disable --journey mirror-mind
+```
+
+Unbind the context capability when you no longer want it injected:
+
+```bash
+uv run python -m memory ext maestro unbind ariad_workspace --journey mirror-mind
+```
+
+Overlay policies:
+
+| Policy | Values |
+|---|---|
+| `repo-contract-policy` | `do_not_modify`, `ask_before_change`, `allow_if_explicit` |
+| `doc-update-policy` | `project_relevant_only`, `ariad_required`, `manual_only` |
+| `checkpoint-policy` | `ariad_full`, `compressed_for_trivial`, `manual` |
+| `validation-policy` | `required`, `when_user_visible`, `manual` |
+
+When active, `memory build load <journey>` already receives the overlay instructions because Mirror's extension context mechanism injects capabilities bound to the active journey.
+
 ### `doctor`
 
 ```bash
@@ -62,35 +140,19 @@ Or resolve the project from a Mirror journey's `project_path`:
 uv run python -m memory ext maestro doctor --journey diario
 ```
 
-Checks for:
+Checks both dimensions:
 
-- consumer projects with a local Ariad instance:
-  - `AGENTS.md` exists and mentions Ariad
-  - `docs/process/development-guide.md`
-  - `docs/project/briefing.md`
-  - `docs/project/decisions.md`
-  - `docs/project/roadmap/index.md`
-  - `docs/product/principles.md`
-- canonical Ariad repositories, detected by method docs and project templates
+- **Repository adoption**: whether the project has a local Ariad instance in its files.
+- **Workspace overlay**: whether Maestro has a local Ariad overlay configured and bound to the journey.
 
-Example output:
+Possible statuses include:
 
-```text
-Ariad readiness report
+- `ready`: repository adoption is complete.
+- `workspace overlay`: Ariad is active locally through a bound workspace overlay, even if the repo is not adopted.
+- `canonical`: the target appears to be the canonical Ariad repository.
+- `not ready`: neither repository adoption nor active workspace overlay is present.
 
-Project: /path/to/project
-
-✅ AGENTS.md — exists and mentions Ariad
-✅ docs/process/development-guide.md — exists
-✅ docs/project/briefing.md — exists
-✅ docs/project/decisions.md — exists
-✅ docs/project/roadmap/index.md — exists
-✅ docs/product/principles.md — exists
-
-Status: ready
-```
-
-The command is read-only. It reports readiness, missing files, and warnings. When a project exists but is not ready, it suggests the corresponding `adopt --dry-run` next step.
+The command is read-only. It reports readiness, missing files, overlay state, and next steps.
 
 ### `update`
 
@@ -108,20 +170,29 @@ uv run python -m memory extensions install maestro \
   --mirror-home ~/.mirror-minds/<user>
 ```
 
+Run pending migrations after updating an installed extension:
+
+```bash
+uv run python -m memory ext maestro migrate
+```
+
 ## Status
 
 Implemented:
 
-- `doctor` — read-only readiness check with `adopt --dry-run` next-step guidance
+- `doctor` — read-only readiness check across repository adoption and workspace overlay
 - `adopt` — copy missing templates without overwriting existing files
 - `adopt --dry-run` — read-only adoption plan
 - `init` — create a new Ariad-ready project safely
 - `update` — report-only comparison against canonical templates
+- `overlay` — local Ariad workspace overlay for Mirror journeys
+- `ariad_workspace` — Mirror context capability for overlay injection
 
 Planned later:
 
 - `adopt` reconciliation mode — help merge/adapt existing local docs
 - `update` reconciliation mode — propose safe local updates without blind overwrite
+- template version awareness
 
 ## Relationship to Ariad
 
@@ -129,5 +200,7 @@ Planned later:
 |---|---|---|
 | **Ariad** | `~/Code/ariad` (canonical repo) | The method: docs, templates, principles |
 | **Maestro** | This extension | The Mirror runtime that operates the method |
+| **Repository adoption** | Target project files | Public project contract |
+| **Workspace overlay** | Local Mirror extension state | Local runtime contract |
 
 Ariad does not depend on Mirror Mind. Maestro depends on both.

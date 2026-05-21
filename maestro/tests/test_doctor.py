@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.doctor import cmd_doctor, inspect_project, render_report
+from src.overlay import cmd_overlay
+from tests.test_adopt import make_ariad_root
 from tests.conftest import seed_journey
 
 
@@ -208,3 +210,54 @@ def test_cmd_doctor_returns_error_when_journey_has_no_project_path(ariad_api, ca
     captured = capsys.readouterr()
     assert rc == 1
     assert "has no project_path configured" in captured.err
+
+
+def test_cmd_doctor_reports_workspace_overlay_for_unadopted_repo(
+    ariad_api, tmp_path: Path, capsys
+):
+    ariad_root = make_ariad_root(tmp_path / "canonical")
+    project = tmp_path / "project"
+    project.mkdir()
+    seed_journey(ariad_api, "mirror-mind", project)
+    cmd_overlay(
+        ariad_api,
+        ["enable", "--journey", "mirror-mind", "--ariad-root", str(ariad_root)],
+    )
+    ariad_api.db.execute(
+        """
+        INSERT INTO _ext_bindings (extension_id, capability_id, target_kind, target_id, created_at)
+        VALUES ('maestro', 'ariad_workspace', 'journey', 'mirror-mind', '2026-05-20T00:00:00+00:00')
+        """
+    )
+    ariad_api.db.commit()
+    capsys.readouterr()
+
+    rc = cmd_doctor(ariad_api, ["--journey", "mirror-mind"])
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Repository adoption: not adopted" in out
+    assert "Workspace overlay: active" in out
+    assert "Status: workspace overlay" in out
+    assert "Next step:" not in out
+
+
+def test_cmd_doctor_reports_configured_overlay_without_binding_as_not_ready(
+    ariad_api, tmp_path: Path, capsys
+):
+    ariad_root = make_ariad_root(tmp_path / "canonical")
+    project = tmp_path / "project"
+    project.mkdir()
+    seed_journey(ariad_api, "mirror-mind", project)
+    cmd_overlay(
+        ariad_api,
+        ["enable", "--journey", "mirror-mind", "--ariad-root", str(ariad_root)],
+    )
+    capsys.readouterr()
+
+    rc = cmd_doctor(ariad_api, ["--journey", "mirror-mind"])
+
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Workspace overlay: configured, not active in context" in out
+    assert "Status: not ready" in out

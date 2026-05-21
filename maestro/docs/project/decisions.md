@@ -4,6 +4,25 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Ariad has repository adoption and workspace overlay modes
+
+**Date:** 2026-05-20
+**Status:** Decided
+
+Decision: Maestro distinguishes **repository adoption** from **workspace overlay**.
+
+Repository adoption means the project declares Ariad in its public agent contract and carries a local Ariad instance in repo files. Workspace overlay means Ariad guides a local Mirror journey through extension context without modifying the repository contract.
+
+Rationale: Ariad-generated work can be important to the project, but the authority differs by surface. Local conduct can be chosen by the developer, project docs should record truths about the project, and repository contract files should change only when project governance explicitly adopts Ariad.
+
+Consequences:
+
+- `adopt` remains repository-level adoption and may create missing templates safely.
+- `overlay` configures local Ariad operation for a journey without writing project files.
+- `ariad_workspace` is the Mirror context capability used to inject overlay instructions.
+- `doctor` reports both repository adoption and workspace overlay state.
+- Projects like Mirror Mind can be operated locally with Ariad without forcing Ariad onto all repo users.
+
 ### Maestro is the Mirror implementation of Ariad
 
 **Date:** 2026-05-20

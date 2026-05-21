@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from src.adopt import cmd_adopt
+from src.context import provide_ariad_workspace
 from src.doctor import cmd_doctor
 from src.init import cmd_init
+from src.overlay import cmd_overlay
 from src.update import cmd_update
 
 from memory.extensions.api import ExtensionAPI
@@ -31,3 +33,9 @@ def register(api: ExtensionAPI) -> None:
         cmd_update,
         summary="Compare a local Ariad instance to canonical templates.",
     )
+    api.register_cli(
+        "overlay",
+        cmd_overlay,
+        summary="Manage local Ariad workspace overlays.",
+    )
+    api.register_mirror_context("ariad_workspace", provide_ariad_workspace)

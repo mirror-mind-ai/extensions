@@ -4,6 +4,29 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-20 — Workspace overlay implemented
+
+Maestro now distinguishes repository adoption from workspace overlay.
+
+Repository adoption means Ariad is declared in project files. Workspace overlay means Ariad guides a local Mirror journey through extension context without changing repository contract files.
+
+Implemented:
+
+- `overlay enable/status/set/disable`;
+- `ariad_workspace` Mirror context capability;
+- `doctor` reporting both repository adoption and workspace overlay;
+- local overlay properties that affect the next context load immediately.
+
+This matters because projects like Mirror Mind can be operated locally through Ariad without forcing all repository users or contributors to adopt Ariad publicly.
+
+Verification:
+
+```bash
+cd /Users/alissonvale/mirror
+PYTHONPATH=/Users/alissonvale/mirror/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
+```
+
 ### 2026-05-20 — Maestro adopted Ariad locally
 
 Maestro now has its own local Ariad instance:

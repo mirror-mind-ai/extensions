@@ -2,7 +2,7 @@ id: maestro
 name: Maestro
 category: extension
 kind: command-skill
-summary: Mirror extension that operates the Ariad method (init, adopt, doctor, update).
+summary: Mirror extension that operates the Ariad method (init, adopt, overlay, doctor, update).
 table_prefix: ext_maestro_
 
 entrypoint:

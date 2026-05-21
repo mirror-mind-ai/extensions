@@ -110,7 +110,68 @@ def is_canonical_ariad_repo(root: Path) -> bool:
     return all((root / marker).exists() for marker in CANONICAL_MARKERS)
 
 
-def render_report(report: DoctorReport, *, next_step: str | None = None) -> str:
+def overlay_status_for_journey(api, journey_id: str | None) -> WorkspaceOverlayStatus | None:
+    if not journey_id:
+        return None
+    try:
+        api.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ext_maestro_workspace_overlays (
+                journey_id TEXT PRIMARY KEY,
+                ariad_root TEXT NOT NULL,
+                contract_mode TEXT NOT NULL DEFAULT 'workspace_overlay',
+                repo_contract_policy TEXT NOT NULL DEFAULT 'do_not_modify',
+                doc_update_policy TEXT NOT NULL DEFAULT 'project_relevant_only',
+                checkpoint_policy TEXT NOT NULL DEFAULT 'ariad_full',
+                validation_policy TEXT NOT NULL DEFAULT 'required',
+                project_path_snapshot TEXT,
+                notes TEXT,
+                enabled_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        api.commit()
+        row = api.read(
+            """
+            SELECT ariad_root, repo_contract_policy, doc_update_policy,
+                   checkpoint_policy, validation_policy
+            FROM ext_maestro_workspace_overlays
+            WHERE journey_id = ?
+            """,
+            (journey_id,),
+        ).fetchone()
+        binding = api.read(
+            """
+            SELECT 1 FROM _ext_bindings
+            WHERE extension_id = ? AND capability_id = 'ariad_workspace'
+              AND target_kind = 'journey' AND target_id = ?
+            LIMIT 1
+            """,
+            (api.extension_id, journey_id),
+        ).fetchone()
+    except Exception:
+        return None
+
+    if row is None:
+        return WorkspaceOverlayStatus(configured=False, binding_active=binding is not None)
+    return WorkspaceOverlayStatus(
+        configured=True,
+        binding_active=binding is not None,
+        ariad_root=row["ariad_root"],
+        repo_contract_policy=row["repo_contract_policy"],
+        doc_update_policy=row["doc_update_policy"],
+        checkpoint_policy=row["checkpoint_policy"],
+        validation_policy=row["validation_policy"],
+    )
+
+
+def render_report(
+    report: DoctorReport,
+    *,
+    next_step: str | None = None,
+    overlay: WorkspaceOverlayStatus | None = None,
+) -> str:
     lines: list[str] = []
     lines.append("Ariad readiness report")
     lines.append("")
@@ -121,6 +182,9 @@ def render_report(report: DoctorReport, *, next_step: str | None = None) -> str:
         lines.append(
             "This appears to be the canonical Ariad repository, not a local Ariad project instance."
         )
+        lines.append("")
+        lines.append("Repository adoption: canonical")
+        lines.append("Workspace overlay: active" if overlay and overlay.active else "Workspace overlay: inactive")
         lines.append("")
         lines.append("Status: canonical")
         return "\n".join(lines) + "\n"
@@ -150,12 +214,60 @@ def render_report(report: DoctorReport, *, next_step: str | None = None) -> str:
             lines.append(f"- {warning}")
 
     lines.append("")
-    lines.append(f"Status: {'ready' if report.ready else 'not ready'}")
-    if next_step and report.exists and not report.ready and not report.canonical:
+    if report.ready:
+        lines.append("Repository adoption: ready")
+    elif report.exists:
+        lines.append("Repository adoption: not adopted")
+
+    if overlay is not None:
+        if overlay.active:
+            lines.append("Workspace overlay: active")
+            if overlay.ariad_root:
+                lines.append(f"Ariad root: {overlay.ariad_root}")
+            if overlay.repo_contract_policy:
+                lines.append(f"Repo contract policy: {overlay.repo_contract_policy}")
+            if overlay.doc_update_policy:
+                lines.append(f"Doc update policy: {overlay.doc_update_policy}")
+            if overlay.checkpoint_policy:
+                lines.append(f"Checkpoint policy: {overlay.checkpoint_policy}")
+            if overlay.validation_policy:
+                lines.append(f"Validation policy: {overlay.validation_policy}")
+        elif overlay.configured:
+            lines.append("Workspace overlay: configured, not active in context")
+        elif overlay.binding_active:
+            lines.append("Workspace overlay: binding active, not configured")
+        else:
+            lines.append("Workspace overlay: inactive")
+
+    if report.ready:
+        status = "ready"
+    elif overlay and overlay.active:
+        status = "workspace overlay"
+    else:
+        status = "not ready"
+
+    lines.append("")
+    lines.append(f"Status: {status}")
+    if next_step and report.exists and status == "not ready" and not report.canonical:
         lines.append("")
         lines.append("Next step:")
         lines.append(f"  {next_step}")
     return "\n".join(lines) + "\n"
+
+
+@dataclass(frozen=True)
+class WorkspaceOverlayStatus:
+    configured: bool
+    binding_active: bool
+    ariad_root: str | None = None
+    repo_contract_policy: str | None = None
+    doc_update_policy: str | None = None
+    checkpoint_policy: str | None = None
+    validation_policy: str | None = None
+
+    @property
+    def active(self) -> bool:
+        return self.configured and self.binding_active
 
 
 class ProjectResolutionError(ValueError):
@@ -219,5 +331,6 @@ def cmd_doctor(api, argv: list[str]) -> int:
         )
 
     report = inspect_project(target)
-    sys.stdout.write(render_report(report, next_step=next_step))
-    return 0 if report.ok else 1
+    overlay = overlay_status_for_journey(api, args.journey_id)
+    sys.stdout.write(render_report(report, next_step=next_step, overlay=overlay))
+    return 0 if report.ok or (overlay and overlay.active) else 1

@@ -19,6 +19,7 @@ This focus is complete when:
 | Item | Status | Notes |
 |------|--------|-------|
 | Ariad adoption executor | Done | `doctor`, `init`, `adopt`, and `update` implemented. |
+| Workspace overlay | Done | Local journey-level Ariad operation via `overlay` and `ariad_workspace` context capability. |
 | Mirror/org restructuring | Done | Extension lives at `mirror-mind-ai/extensions/tree/main/maestro`. |
 | Self-adoption | Done | Maestro now has a local Ariad instance. |
 | Pilot hardening | Active | Use Raphael onboarding to observe real friction before adding more automation. |
@@ -45,7 +46,7 @@ Track which canonical Ariad template state a project adopted. Candidate mechanis
 
 ### Better readiness reporting
 
-Make `doctor` output more actionable for not-ready projects, including clearer explanation of local Ariad instance requirements and next commands.
+Make `doctor` output more actionable for not-ready projects, including clearer explanation of repository adoption, workspace overlay, local Ariad instance requirements, and next commands.
 
 ### Skill-guided adoption
 

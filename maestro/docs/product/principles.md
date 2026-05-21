@@ -22,6 +22,12 @@ A consumer project's local docs are part of its identity.
 
 When canonical Ariad templates and local project docs differ, Maestro should preserve the local files and help surface the difference. It should not treat local divergence as an error by default.
 
+### Contract surface matters
+
+Maestro should never confuse a local operating preference with a public repository contract.
+
+A developer may use Ariad locally as a workspace overlay. A project may also adopt Ariad publicly through repository files. These are different authority levels and the interface should keep them visible.
+
 ### Deterministic core, guided judgment
 
 Commands should be deterministic where the operation is mechanical: inspect files, copy missing templates, compare content.

@@ -39,6 +39,7 @@ cd /Users/alissonvale/mirror
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro doctor --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro adopt --journey maestro --dry-run
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro update --journey maestro
+uv run python -m memory ext maestro overlay status --journey mirror-mind
 ```
 
 ## Verification
@@ -53,6 +54,8 @@ For command output changes, include at least one manual validation route showing
 - whether files should or should not be written.
 
 For adoption behavior, validate both dry-run and write mode when practical. Existing files must remain preserved.
+
+For workspace overlay behavior, validate that context changes are stored in `ext_maestro_*` tables, that the `ariad_workspace` binding controls injection, and that no target project files are written.
 
 ## Documentation Rules
 
