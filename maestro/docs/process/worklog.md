@@ -4,13 +4,27 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-21 — Navigator preference policies implemented
+
+Workspace overlay now carries explicit Navigator preference policies for commit, push, worklog, documentation detail, branch, and pull request behavior.
+
+This matters because Ariad can now ship with opinionated defaults while Maestro gives advanced Navigators a concrete way to override local conduct without changing repository contract files.
+
+Verification:
+
+```bash
+cd /Users/alissonvale/mirror
+PYTHONPATH=/Users/alissonvale/mirror/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
+```
+
 ### 2026-05-21 — Method contract and Navigator preferences clarified
 
 The Maestro docs now distinguish Ariad's method contract from Navigator preference defaults and local overrides.
 
 This matters because Maestro should not treat every good habit as a universal Ariad invariant. Ariad can ship with opinionated defaults while still allowing advanced Navigators to customize local behavior.
 
-Follow-up: add explicit overlay policies for commit, push, worklog, documentation detail, branch, and pull request habits after the canonical Ariad docs stabilize this distinction.
+Follow-up: make preference configuration easier to drive through natural language and surface which values are Ariad defaults versus local overrides.
 
 ### 2026-05-20 — Workspace overlay implemented
 

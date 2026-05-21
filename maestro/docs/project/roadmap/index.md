@@ -37,14 +37,9 @@ Move beyond report-only comparison when the right safe behavior is clear. Possib
 
 ### Navigator preference policies
 
-Expand workspace overlay beyond the current first policy set. Future policies may include:
+Workspace overlay now supports commit, push, worklog, documentation detail, branch, and pull request policies.
 
-- commit policy;
-- push policy;
-- worklog policy;
-- documentation detail policy;
-- branch policy;
-- pull request policy.
+Future work should focus on making these preferences easier to inspect, explain, and configure through natural language.
 
 The goal is to preserve Ariad's opinionated defaults while letting advanced Navigators customize behavior without altering the repository contract.
 

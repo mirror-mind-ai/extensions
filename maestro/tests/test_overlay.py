@@ -38,6 +38,12 @@ def test_overlay_enable_configures_workspace_without_binding(ariad_api, tmp_path
     assert overlay.ariad_root == str(ariad_root.resolve())
     assert overlay.repo_contract_policy == "do_not_modify"
     assert overlay.doc_update_policy == "project_relevant_only"
+    assert overlay.commit_policy == "after_validated_story"
+    assert overlay.push_policy == "ask_before_push"
+    assert overlay.worklog_policy == "meaningful_milestones"
+    assert overlay.documentation_detail_policy == "smallest_coherent_surface"
+    assert overlay.branch_policy == "project_default"
+    assert overlay.pr_policy == "project_default"
     assert overlay.project_path_snapshot == str(project.resolve())
     assert "Status: configured, not active in context" in out
     assert "bind ariad_workspace --journey mirror-mind" in out
@@ -69,11 +75,23 @@ def test_overlay_set_changes_contract_properties_immediately(ariad_api, tmp_path
         repo_contract_policy="ask_before_change",
         checkpoint_policy="compressed_for_trivial",
         validation_policy="when_user_visible",
+        commit_policy="after_any_codebase_change",
+        push_policy="epic_boundary",
+        worklog_policy="every_story",
+        documentation_detail_policy="detailed",
+        branch_policy="dedicated_branch_per_story",
+        pr_policy="pr_per_story",
     )
 
     assert overlay.repo_contract_policy == "ask_before_change"
     assert overlay.checkpoint_policy == "compressed_for_trivial"
     assert overlay.validation_policy == "when_user_visible"
+    assert overlay.commit_policy == "after_any_codebase_change"
+    assert overlay.push_policy == "epic_boundary"
+    assert overlay.worklog_policy == "every_story"
+    assert overlay.documentation_detail_policy == "detailed"
+    assert overlay.branch_policy == "dedicated_branch_per_story"
+    assert overlay.pr_policy == "pr_per_story"
 
 
 def test_overlay_disable_removes_configuration(ariad_api, tmp_path: Path, capsys):

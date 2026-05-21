@@ -17,7 +17,7 @@ Maestro distinguishes Ariad's method contract, repository contract, and Navigato
 
 Ariad has opinionated Navigator preference defaults. These defaults are recommended starting behaviors, not universal laws. Advanced Navigators may override preferences such as checkpoint compression, validation strictness, documentation detail, commit frequency, or push policy.
 
-Maestro currently supports the first overlay preference policies directly: repository contract policy, documentation update policy, checkpoint policy, and validation policy.
+Maestro currently supports overlay preference policies directly: repository contract, documentation update, checkpoint, validation, commit, push, worklog, documentation detail, branch, and pull request policies.
 
 Maestro distinguishes two contract modes.
 
@@ -86,7 +86,9 @@ Change behavior immediately for future context loads:
 uv run python -m memory ext maestro overlay set \
   --journey <slug> \
   --repo-contract-policy ask_before_change \
-  --checkpoint-policy compressed_for_trivial
+  --checkpoint-policy compressed_for_trivial \
+  --commit-policy after_any_codebase_change \
+  --push-policy epic_boundary
 ```
 
 The context provider reads overlay properties every time Mirror context is loaded, so changes are reflected on the next `memory build load <slug>` or Mirror Mode load.

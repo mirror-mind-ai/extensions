@@ -18,7 +18,7 @@ Consequences:
 - Ariad defaults should be treated as recommended starting preferences.
 - Maestro overlay configuration should make preferences explicit when possible.
 - A personal process habit should not be promoted to repository contract unless explicitly requested.
-- Future overlay work may add commit, push, worklog, documentation detail, branch, and PR policies.
+- Overlay configuration supports commit, push, worklog, documentation detail, branch, and PR policies.
 
 ### Ariad has repository adoption and workspace overlay modes
 
@@ -100,3 +100,12 @@ Maestro can compare local files against canonical templates, but does not yet tr
 **Raised:** 2026-05-20
 
 `update` is report-only and `adopt` is safe-write only. A future reconciliation mode could propose patches, produce diffs, or guide the Driver through local adaptation. This should be informed by real adoption friction, especially the Raphael pilot.
+
+### Extract shared overlay/project helpers
+
+**Status:** Open
+**Raised:** 2026-05-21
+
+`doctor.py` currently reads workspace overlay rows directly instead of reusing `get_overlay()` from `overlay.py`. This avoids an import cycle because `overlay.py` imports `project_path_for_journey()` from `doctor.py`.
+
+This is acceptable for the current slice, but the duplication should be revisited if overlay status grows further. A likely cleanup is extracting project and overlay helper functions into a neutral module such as `src/project.py` or `src/workspace.py`, allowing `doctor.py`, `overlay.py`, and context providers to share the same read model without cycles.

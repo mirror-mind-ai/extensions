@@ -110,7 +110,9 @@ Change contract properties:
 uv run python -m memory ext maestro overlay set \
   --journey mirror-mind \
   --repo-contract-policy ask_before_change \
-  --checkpoint-policy compressed_for_trivial
+  --checkpoint-policy compressed_for_trivial \
+  --commit-policy after_any_codebase_change \
+  --push-policy epic_boundary
 ```
 
 Disable the overlay configuration:
@@ -133,8 +135,12 @@ Overlay policies:
 | `doc-update-policy` | `project_relevant_only`, `ariad_required`, `manual_only` | `project_relevant_only` |
 | `checkpoint-policy` | `ariad_full`, `compressed_for_trivial`, `manual` | `ariad_full` |
 | `validation-policy` | `required`, `when_user_visible`, `manual` | `required` |
-
-These are the first Maestro-supported Navigator preferences. Future versions may add commit, push, worklog, documentation detail, branch, and pull request policies.
+| `commit-policy` | `after_validated_story`, `after_any_codebase_change`, `manual_only` | `after_validated_story` |
+| `push-policy` | `ask_before_push`, `after_accepted_story`, `epic_boundary`, `manual_only` | `ask_before_push` |
+| `worklog-policy` | `meaningful_milestones`, `every_story`, `manual_only` | `meaningful_milestones` |
+| `documentation-detail-policy` | `smallest_coherent_surface`, `detailed`, `manual_only` | `smallest_coherent_surface` |
+| `branch-policy` | `project_default`, `ask_before_branch`, `dedicated_branch_per_story` | `project_default` |
+| `pr-policy` | `project_default`, `ask_before_pr`, `pr_per_story`, `no_pr` | `project_default` |
 
 When active, `memory build load <journey>` already receives the overlay instructions because Mirror's extension context mechanism injects capabilities bound to the active journey.
 

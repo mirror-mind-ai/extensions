@@ -17,11 +17,23 @@ DEFAULT_REPO_CONTRACT_POLICY = "do_not_modify"
 DEFAULT_DOC_UPDATE_POLICY = "project_relevant_only"
 DEFAULT_CHECKPOINT_POLICY = "ariad_full"
 DEFAULT_VALIDATION_POLICY = "required"
+DEFAULT_COMMIT_POLICY = "after_validated_story"
+DEFAULT_PUSH_POLICY = "ask_before_push"
+DEFAULT_WORKLOG_POLICY = "meaningful_milestones"
+DEFAULT_DOCUMENTATION_DETAIL_POLICY = "smallest_coherent_surface"
+DEFAULT_BRANCH_POLICY = "project_default"
+DEFAULT_PR_POLICY = "project_default"
 
 VALID_REPO_CONTRACT_POLICIES = ("do_not_modify", "ask_before_change", "allow_if_explicit")
 VALID_DOC_UPDATE_POLICIES = ("project_relevant_only", "ariad_required", "manual_only")
 VALID_CHECKPOINT_POLICIES = ("ariad_full", "compressed_for_trivial", "manual")
 VALID_VALIDATION_POLICIES = ("required", "when_user_visible", "manual")
+VALID_COMMIT_POLICIES = ("after_validated_story", "after_any_codebase_change", "manual_only")
+VALID_PUSH_POLICIES = ("ask_before_push", "after_accepted_story", "epic_boundary", "manual_only")
+VALID_WORKLOG_POLICIES = ("meaningful_milestones", "every_story", "manual_only")
+VALID_DOCUMENTATION_DETAIL_POLICIES = ("smallest_coherent_surface", "detailed", "manual_only")
+VALID_BRANCH_POLICIES = ("project_default", "ask_before_branch", "dedicated_branch_per_story")
+VALID_PR_POLICIES = ("project_default", "ask_before_pr", "pr_per_story", "no_pr")
 
 
 @dataclass(frozen=True)
@@ -33,6 +45,12 @@ class WorkspaceOverlay:
     doc_update_policy: str
     checkpoint_policy: str
     validation_policy: str
+    commit_policy: str
+    push_policy: str
+    worklog_policy: str
+    documentation_detail_policy: str
+    branch_policy: str
+    pr_policy: str
     project_path_snapshot: str | None
     notes: str | None
     enabled_at: str
@@ -54,6 +72,12 @@ def ensure_schema(api) -> None:
             doc_update_policy TEXT NOT NULL DEFAULT 'project_relevant_only',
             checkpoint_policy TEXT NOT NULL DEFAULT 'ariad_full',
             validation_policy TEXT NOT NULL DEFAULT 'required',
+            commit_policy TEXT NOT NULL DEFAULT 'after_validated_story',
+            push_policy TEXT NOT NULL DEFAULT 'ask_before_push',
+            worklog_policy TEXT NOT NULL DEFAULT 'meaningful_milestones',
+            documentation_detail_policy TEXT NOT NULL DEFAULT 'smallest_coherent_surface',
+            branch_policy TEXT NOT NULL DEFAULT 'project_default',
+            pr_policy TEXT NOT NULL DEFAULT 'project_default',
             project_path_snapshot TEXT,
             notes TEXT,
             enabled_at TEXT NOT NULL,
@@ -80,6 +104,8 @@ def get_overlay(api, journey_id: str) -> WorkspaceOverlay | None:
         """
         SELECT journey_id, ariad_root, contract_mode, repo_contract_policy,
                doc_update_policy, checkpoint_policy, validation_policy,
+               commit_policy, push_policy, worklog_policy,
+               documentation_detail_policy, branch_policy, pr_policy,
                project_path_snapshot, notes, enabled_at, updated_at
         FROM ext_maestro_workspace_overlays
         WHERE journey_id = ?
@@ -96,6 +122,12 @@ def get_overlay(api, journey_id: str) -> WorkspaceOverlay | None:
         doc_update_policy=row["doc_update_policy"],
         checkpoint_policy=row["checkpoint_policy"],
         validation_policy=row["validation_policy"],
+        commit_policy=row["commit_policy"],
+        push_policy=row["push_policy"],
+        worklog_policy=row["worklog_policy"],
+        documentation_detail_policy=row["documentation_detail_policy"],
+        branch_policy=row["branch_policy"],
+        pr_policy=row["pr_policy"],
         project_path_snapshot=row["project_path_snapshot"],
         notes=row["notes"],
         enabled_at=row["enabled_at"],
@@ -125,6 +157,12 @@ def upsert_overlay(
     doc_update_policy: str = DEFAULT_DOC_UPDATE_POLICY,
     checkpoint_policy: str = DEFAULT_CHECKPOINT_POLICY,
     validation_policy: str = DEFAULT_VALIDATION_POLICY,
+    commit_policy: str = DEFAULT_COMMIT_POLICY,
+    push_policy: str = DEFAULT_PUSH_POLICY,
+    worklog_policy: str = DEFAULT_WORKLOG_POLICY,
+    documentation_detail_policy: str = DEFAULT_DOCUMENTATION_DETAIL_POLICY,
+    branch_policy: str = DEFAULT_BRANCH_POLICY,
+    pr_policy: str = DEFAULT_PR_POLICY,
     notes: str | None = None,
 ) -> WorkspaceOverlay:
     ensure_schema(api)
@@ -140,6 +178,16 @@ def upsert_overlay(
     validation_policy = validate_policy(
         "validation_policy", validation_policy, VALID_VALIDATION_POLICIES
     )
+    commit_policy = validate_policy("commit_policy", commit_policy, VALID_COMMIT_POLICIES)
+    push_policy = validate_policy("push_policy", push_policy, VALID_PUSH_POLICIES)
+    worklog_policy = validate_policy("worklog_policy", worklog_policy, VALID_WORKLOG_POLICIES)
+    documentation_detail_policy = validate_policy(
+        "documentation_detail_policy",
+        documentation_detail_policy,
+        VALID_DOCUMENTATION_DETAIL_POLICIES,
+    )
+    branch_policy = validate_policy("branch_policy", branch_policy, VALID_BRANCH_POLICIES)
+    pr_policy = validate_policy("pr_policy", pr_policy, VALID_PR_POLICIES)
 
     project = project_path_for_journey(api, journey_id)
     project_snapshot = str(project) if project else None
@@ -156,6 +204,12 @@ def upsert_overlay(
                 doc_update_policy = ?,
                 checkpoint_policy = ?,
                 validation_policy = ?,
+                commit_policy = ?,
+                push_policy = ?,
+                worklog_policy = ?,
+                documentation_detail_policy = ?,
+                branch_policy = ?,
+                pr_policy = ?,
                 project_path_snapshot = ?,
                 notes = ?,
                 updated_at = ?
@@ -168,6 +222,12 @@ def upsert_overlay(
                 doc_update_policy,
                 checkpoint_policy,
                 validation_policy,
+                commit_policy,
+                push_policy,
+                worklog_policy,
+                documentation_detail_policy,
+                branch_policy,
+                pr_policy,
                 project_snapshot,
                 notes,
                 updated_at,
@@ -180,8 +240,10 @@ def upsert_overlay(
             INSERT INTO ext_maestro_workspace_overlays (
                 journey_id, ariad_root, contract_mode, repo_contract_policy,
                 doc_update_policy, checkpoint_policy, validation_policy,
+                commit_policy, push_policy, worklog_policy,
+                documentation_detail_policy, branch_policy, pr_policy,
                 project_path_snapshot, notes, enabled_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 journey_id,
@@ -191,6 +253,12 @@ def upsert_overlay(
                 doc_update_policy,
                 checkpoint_policy,
                 validation_policy,
+                commit_policy,
+                push_policy,
+                worklog_policy,
+                documentation_detail_policy,
+                branch_policy,
+                pr_policy,
                 project_snapshot,
                 notes,
                 enabled_at,
@@ -212,6 +280,12 @@ def update_overlay(
     doc_update_policy: str | None = None,
     checkpoint_policy: str | None = None,
     validation_policy: str | None = None,
+    commit_policy: str | None = None,
+    push_policy: str | None = None,
+    worklog_policy: str | None = None,
+    documentation_detail_policy: str | None = None,
+    branch_policy: str | None = None,
+    pr_policy: str | None = None,
     notes: str | None = None,
 ) -> WorkspaceOverlay:
     current = get_overlay(api, journey_id)
@@ -225,6 +299,13 @@ def update_overlay(
         doc_update_policy=doc_update_policy or current.doc_update_policy,
         checkpoint_policy=checkpoint_policy or current.checkpoint_policy,
         validation_policy=validation_policy or current.validation_policy,
+        commit_policy=commit_policy or current.commit_policy,
+        push_policy=push_policy or current.push_policy,
+        worklog_policy=worklog_policy or current.worklog_policy,
+        documentation_detail_policy=documentation_detail_policy
+        or current.documentation_detail_policy,
+        branch_policy=branch_policy or current.branch_policy,
+        pr_policy=pr_policy or current.pr_policy,
         notes=notes if notes is not None else current.notes,
     )
 
@@ -266,6 +347,12 @@ def render_overlay_status(api, journey_id: str) -> str:
     lines.append(f"Doc update policy: {overlay.doc_update_policy}")
     lines.append(f"Checkpoint policy: {overlay.checkpoint_policy}")
     lines.append(f"Validation policy: {overlay.validation_policy}")
+    lines.append(f"Commit policy: {overlay.commit_policy}")
+    lines.append(f"Push policy: {overlay.push_policy}")
+    lines.append(f"Worklog policy: {overlay.worklog_policy}")
+    lines.append(f"Documentation detail policy: {overlay.documentation_detail_policy}")
+    lines.append(f"Branch policy: {overlay.branch_policy}")
+    lines.append(f"PR policy: {overlay.pr_policy}")
     if overlay.project_path_snapshot:
         lines.append(f"Project path snapshot: {overlay.project_path_snapshot}")
     if overlay.notes:
@@ -300,6 +387,12 @@ def _add_policy_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--doc-update-policy", choices=VALID_DOC_UPDATE_POLICIES)
     parser.add_argument("--checkpoint-policy", choices=VALID_CHECKPOINT_POLICIES)
     parser.add_argument("--validation-policy", choices=VALID_VALIDATION_POLICIES)
+    parser.add_argument("--commit-policy", choices=VALID_COMMIT_POLICIES)
+    parser.add_argument("--push-policy", choices=VALID_PUSH_POLICIES)
+    parser.add_argument("--worklog-policy", choices=VALID_WORKLOG_POLICIES)
+    parser.add_argument("--documentation-detail-policy", choices=VALID_DOCUMENTATION_DETAIL_POLICIES)
+    parser.add_argument("--branch-policy", choices=VALID_BRANCH_POLICIES)
+    parser.add_argument("--pr-policy", choices=VALID_PR_POLICIES)
     parser.add_argument("--notes")
 
 
@@ -337,6 +430,13 @@ def cmd_overlay(api, argv: list[str]) -> int:
                 doc_update_policy=args.doc_update_policy or DEFAULT_DOC_UPDATE_POLICY,
                 checkpoint_policy=args.checkpoint_policy or DEFAULT_CHECKPOINT_POLICY,
                 validation_policy=args.validation_policy or DEFAULT_VALIDATION_POLICY,
+                commit_policy=args.commit_policy or DEFAULT_COMMIT_POLICY,
+                push_policy=args.push_policy or DEFAULT_PUSH_POLICY,
+                worklog_policy=args.worklog_policy or DEFAULT_WORKLOG_POLICY,
+                documentation_detail_policy=args.documentation_detail_policy
+                or DEFAULT_DOCUMENTATION_DETAIL_POLICY,
+                branch_policy=args.branch_policy or DEFAULT_BRANCH_POLICY,
+                pr_policy=args.pr_policy or DEFAULT_PR_POLICY,
                 notes=args.notes,
             )
             sys.stdout.write(render_overlay_status(api, overlay.journey_id))
@@ -352,6 +452,12 @@ def cmd_overlay(api, argv: list[str]) -> int:
                 doc_update_policy=args.doc_update_policy,
                 checkpoint_policy=args.checkpoint_policy,
                 validation_policy=args.validation_policy,
+                commit_policy=args.commit_policy,
+                push_policy=args.push_policy,
+                worklog_policy=args.worklog_policy,
+                documentation_detail_policy=args.documentation_detail_policy,
+                branch_policy=args.branch_policy,
+                pr_policy=args.pr_policy,
                 notes=args.notes,
             )
             sys.stdout.write(render_overlay_status(api, overlay.journey_id))

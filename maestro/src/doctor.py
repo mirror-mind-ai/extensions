@@ -124,6 +124,12 @@ def overlay_status_for_journey(api, journey_id: str | None) -> WorkspaceOverlayS
                 doc_update_policy TEXT NOT NULL DEFAULT 'project_relevant_only',
                 checkpoint_policy TEXT NOT NULL DEFAULT 'ariad_full',
                 validation_policy TEXT NOT NULL DEFAULT 'required',
+                commit_policy TEXT NOT NULL DEFAULT 'after_validated_story',
+                push_policy TEXT NOT NULL DEFAULT 'ask_before_push',
+                worklog_policy TEXT NOT NULL DEFAULT 'meaningful_milestones',
+                documentation_detail_policy TEXT NOT NULL DEFAULT 'smallest_coherent_surface',
+                branch_policy TEXT NOT NULL DEFAULT 'project_default',
+                pr_policy TEXT NOT NULL DEFAULT 'project_default',
                 project_path_snapshot TEXT,
                 notes TEXT,
                 enabled_at TEXT NOT NULL,
@@ -135,7 +141,9 @@ def overlay_status_for_journey(api, journey_id: str | None) -> WorkspaceOverlayS
         row = api.read(
             """
             SELECT ariad_root, repo_contract_policy, doc_update_policy,
-                   checkpoint_policy, validation_policy
+                   checkpoint_policy, validation_policy,
+                   commit_policy, push_policy, worklog_policy,
+                   documentation_detail_policy, branch_policy, pr_policy
             FROM ext_maestro_workspace_overlays
             WHERE journey_id = ?
             """,
@@ -163,6 +171,12 @@ def overlay_status_for_journey(api, journey_id: str | None) -> WorkspaceOverlayS
         doc_update_policy=row["doc_update_policy"],
         checkpoint_policy=row["checkpoint_policy"],
         validation_policy=row["validation_policy"],
+        commit_policy=row["commit_policy"],
+        push_policy=row["push_policy"],
+        worklog_policy=row["worklog_policy"],
+        documentation_detail_policy=row["documentation_detail_policy"],
+        branch_policy=row["branch_policy"],
+        pr_policy=row["pr_policy"],
     )
 
 
@@ -232,6 +246,20 @@ def render_report(
                 lines.append(f"Checkpoint policy: {overlay.checkpoint_policy}")
             if overlay.validation_policy:
                 lines.append(f"Validation policy: {overlay.validation_policy}")
+            if overlay.commit_policy:
+                lines.append(f"Commit policy: {overlay.commit_policy}")
+            if overlay.push_policy:
+                lines.append(f"Push policy: {overlay.push_policy}")
+            if overlay.worklog_policy:
+                lines.append(f"Worklog policy: {overlay.worklog_policy}")
+            if overlay.documentation_detail_policy:
+                lines.append(
+                    f"Documentation detail policy: {overlay.documentation_detail_policy}"
+                )
+            if overlay.branch_policy:
+                lines.append(f"Branch policy: {overlay.branch_policy}")
+            if overlay.pr_policy:
+                lines.append(f"PR policy: {overlay.pr_policy}")
         elif overlay.configured:
             lines.append("Workspace overlay: configured, not active in context")
         elif overlay.binding_active:
@@ -264,6 +292,12 @@ class WorkspaceOverlayStatus:
     doc_update_policy: str | None = None
     checkpoint_policy: str | None = None
     validation_policy: str | None = None
+    commit_policy: str | None = None
+    push_policy: str | None = None
+    worklog_policy: str | None = None
+    documentation_detail_policy: str | None = None
+    branch_policy: str | None = None
+    pr_policy: str | None = None
 
     @property
     def active(self) -> bool:
