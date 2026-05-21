@@ -209,12 +209,12 @@ def cmd_doctor(api, argv: list[str]) -> int:
     next_step = None
     if args.project_path:
         next_step = (
-            "uv run python -m memory ext ariad adopt "
+            "uv run python -m memory ext maestro adopt "
             f"--project-path {target} --dry-run"
         )
     elif args.journey_id:
         next_step = (
-            "uv run python -m memory ext ariad adopt "
+            "uv run python -m memory ext maestro adopt "
             f"--journey {args.journey_id} --dry-run"
         )
 
