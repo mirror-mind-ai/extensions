@@ -4,6 +4,22 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Maestro status is the getting-started close-loop command
+
+**Date:** 2026-05-21
+**Status:** Decided
+
+Decision: Maestro should provide a `status` command that closes install and update flows with an executable diagnostic.
+
+Rationale: Getting started should not end with an assumption that installation worked. The Raphael onboarding showed that real users need one final command that verifies the installed extension copy, source clone, Ariad root, migrations, and target journey readiness. It also revealed that reinstalling an extension over an older copy can leave stale files in the installed extension directory.
+
+Consequences:
+
+- `status` reports installed copy, source clone, sync state, Ariad root, migration state, and optional journey readiness.
+- Documentation should use `status` as the final validation command after installing or updating Maestro.
+- Stale installed files are treated as not ready and reported separately from normal source drift.
+- A separate Mirror core follow-up should consider clean extension reinstall support.
+
 ### Ariad preferences are defaults, not method invariants
 
 **Date:** 2026-05-21

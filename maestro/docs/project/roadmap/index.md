@@ -22,7 +22,8 @@ This focus is complete when:
 | Workspace overlay | Done | Local journey-level Ariad operation via `overlay` and `ariad_workspace` context capability. |
 | Mirror/org restructuring | Done | Extension lives at `mirror-mind-ai/extensions/tree/main/maestro`. |
 | Self-adoption | Done | Maestro now has a local Ariad instance. |
-| Pilot hardening | Active | Use Raphael onboarding to observe real friction before adding more automation. |
+| Pilot hardening | Done | Raphael onboarding exposed the need for an end-to-end install status command and clone-based updates. |
+| Getting-started close loop | Done | `status` checks installed copy, source clone, Ariad root, migrations, and optional journey readiness. |
 
 ## Planned Work
 
@@ -54,7 +55,9 @@ Track which canonical Ariad template state a project adopted. Candidate mechanis
 
 ### Better readiness reporting
 
-Make `doctor` output more actionable for not-ready projects, including clearer explanation of repository adoption, workspace overlay, local Ariad instance requirements, and next commands.
+`status` now closes the install/update loop by checking Maestro's installed copy, source clone, Ariad root, migrations, and optional journey readiness.
+
+Future reporting work can still make `doctor` output more actionable for not-ready projects, including clearer explanation of repository adoption, workspace overlay, local Ariad instance requirements, and next commands.
 
 ### Skill-guided adoption
 
@@ -66,7 +69,8 @@ Refine `ext-maestro` so natural-language adoption can guide the Driver through i
 - Replaced old Maestro hello-world/coherence slice.
 - Published the extension under `mirror-mind-ai/extensions`.
 - Installed and validated locally.
-- Validated readiness on Conjunto, Diário, Mirror Mind, and Maestro.
+- Validated readiness on Conjunto, Diário/SNA, Mirror Mind, and Maestro.
+- Added `status` as the getting-started close-loop command for Maestro installations.
 
 ## Radar
 

@@ -4,6 +4,25 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-21 — Maestro status command closes getting-started loop
+
+Maestro now has a `status` command that verifies the installed extension copy, source clone, Ariad root, migrations, and optional journey readiness.
+
+This matters because onboarding and update guides should end with a concrete diagnostic, not an implicit assumption that setup worked. The Raphael onboarding rehearsal showed that clone-based updates need a final command that says whether Maestro is coherent end to end.
+
+The command also detects stale installed files left behind by reinstalling over an older extension copy and suggests a clean removal plus reinstall when needed.
+
+Verification:
+
+```bash
+cd /Users/alissonvale/mirror
+PYTHONPATH=/Users/alissonvale/mirror/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
+ARIAD_ROOT=/Users/alissonvale/Code/ariad MIRROR_EXTENSIONS_ROOT=/Users/alissonvale/Code/mirror-extensions uv run python -m memory ext maestro status --journey maestro
+```
+
+Result: 59 tests passed, 3 extensions validated, and `status` reported `Status: ready`.
+
 ### 2026-05-21 — Navigator preference policies implemented
 
 Workspace overlay now carries explicit Navigator preference policies for commit, push, worklog, documentation detail, branch, and pull request behavior.

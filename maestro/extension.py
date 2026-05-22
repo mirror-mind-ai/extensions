@@ -7,6 +7,7 @@ from src.context import provide_ariad_workspace
 from src.doctor import cmd_doctor
 from src.init import cmd_init
 from src.overlay import cmd_overlay
+from src.status import cmd_status
 from src.update import cmd_update
 
 from memory.extensions.api import ExtensionAPI
@@ -37,5 +38,10 @@ def register(api: ExtensionAPI) -> None:
         "overlay",
         cmd_overlay,
         summary="Manage local Ariad workspace overlays.",
+    )
+    api.register_cli(
+        "status",
+        cmd_status,
+        summary="Inspect Maestro installation status and optional journey readiness.",
     )
     api.register_mirror_context("ariad_workspace", provide_ariad_workspace)

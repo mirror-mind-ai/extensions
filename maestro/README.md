@@ -38,6 +38,35 @@ A useful boundary:
 
 ## Commands
 
+### `status`
+
+```bash
+uv run python -m memory ext maestro status --journey <slug>
+```
+
+Checks whether Maestro is operational end to end: installed extension copy, source clone, Ariad root, migrations, and optional project or journey readiness.
+
+Useful after first install or after updating local clones:
+
+```bash
+cd ~/mirror-extensions && git pull
+cd ~/ariad && git pull
+cd ~/mirror
+uv run python -m memory extensions install maestro \
+  --extensions-root ~/mirror-extensions \
+  --mirror-home ~/.mirror-minds/<user>
+uv run python -m memory ext maestro migrate
+uv run python -m memory ext maestro status --journey <slug>
+```
+
+A healthy installation ends with:
+
+```text
+Status: ready
+```
+
+If the installed copy contains stale files from an older Maestro version, `status` reports `Installed copy: stale installed files` and suggests removing the installed extension directory before reinstalling.
+
 ### `init`
 
 ```bash
@@ -196,6 +225,7 @@ uv run python -m memory ext maestro migrate
 
 Implemented:
 
+- `status` — end-to-end install, source clone, Ariad root, migration, and readiness check
 - `doctor` — read-only readiness check across repository adoption and workspace overlay
 - `adopt` — copy missing templates without overwriting existing files
 - `adopt --dry-run` — read-only adoption plan

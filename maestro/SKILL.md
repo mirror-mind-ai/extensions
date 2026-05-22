@@ -33,6 +33,18 @@ The important boundary:
 
 ## Current commands
 
+### `status`
+
+Checks whether Maestro is installed coherently and whether an optional journey or project is ready:
+
+```bash
+uv run python -m memory ext maestro status --journey <slug>
+```
+
+Use this as the final getting-started check after cloning/updating Mirror, Ariad, and Mirror Extensions, reinstalling Maestro, and running migrations. A healthy result ends with `Status: ready`.
+
+If `status` reports `Installed copy: stale installed files`, remove the installed extension directory and reinstall Maestro from the source clone.
+
 ### `init`
 
 Initializes a project with the canonical Ariad templates:
@@ -126,6 +138,8 @@ Possible statuses:
 ## Driver behavior
 
 The command layer provides deterministic inspection and configuration. The Driver remains responsible for reading the project, interpreting the result, proposing reconciliation, and stopping for Navigator review before editing meaningful project content.
+
+When the user asks whether Maestro is installed correctly, whether onboarding finished cleanly, or what command closes the getting-started loop, use `status`.
 
 When the user asks for local Ariad behavior without imposing Ariad on the repo, prefer `overlay`, not `adopt`.
 
