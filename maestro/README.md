@@ -205,7 +205,16 @@ The command is read-only. It reports readiness, missing files, overlay state, an
 uv run python -m memory ext maestro update --journey diario
 ```
 
-Compares a local Ariad instance with the canonical templates. This command is report-only: it lists missing local files, files that differ from canonical, and files that are up to date. It does not overwrite or merge.
+Compares a local Ariad instance with the canonical templates and renders an actionable drift report.
+
+The report classifies:
+
+- missing local template files;
+- files that differ from canonical Ariad;
+- local-only Ariad files under `AGENTS.md`, `docs/process/`, `docs/product/`, and `docs/project/`;
+- files already up to date.
+
+The command is report-only. It does not overwrite, merge, or apply patches. For missing files, use `adopt --dry-run` before writing. For different files, preserve local project truth by default and reconcile through Driver/Navigator review.
 
 ## Install
 

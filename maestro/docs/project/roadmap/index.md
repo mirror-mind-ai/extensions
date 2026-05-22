@@ -29,7 +29,9 @@ This focus is complete when:
 
 ### Improve `update`
 
-Move beyond report-only comparison when the right safe behavior is clear. Possible directions:
+`update` now renders an actionable drift report with counts, local-only Ariad files, and recommended next actions while remaining report-only.
+
+Future directions:
 
 - show better diffs;
 - classify differences by risk;
@@ -71,6 +73,7 @@ Refine `ext-maestro` so natural-language adoption can guide the Driver through i
 - Installed and validated locally.
 - Validated readiness on Conjunto, Diário/SNA, Mirror Mind, and Maestro.
 - Added `status` as the getting-started close-loop command for Maestro installations.
+- Improved `update` into an actionable report-only drift report.
 
 ## Radar
 

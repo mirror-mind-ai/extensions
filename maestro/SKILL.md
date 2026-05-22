@@ -115,6 +115,8 @@ uv run python -m memory ext maestro update --journey <slug>
 
 The command is report-only. It does not overwrite or merge files.
 
+Use the output as a guided drift review. Missing files can be handled through `adopt --dry-run` and then `adopt` after Navigator approval. Different files should be reconciled by Driver/Navigator review, preserving local project truth by default. Local-only Ariad files should stay local unless the idea is generalizable enough to promote into Ariad itself.
+
 ### `doctor`
 
 Checks both Ariad dimensions for a project or journey:

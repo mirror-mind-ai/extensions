@@ -4,6 +4,23 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Update remains report-only while reconciliation is guided
+
+**Date:** 2026-05-22
+**Status:** Decided
+
+Decision: `maestro update` should become more actionable without writing, merging, or patching local project files.
+
+Rationale: Local Ariad instances intentionally diverge from canonical templates because they contain project truth. Treating divergence as an error would violate the Ariad contract. The right next step is to classify drift and guide Driver/Navigator review, not automate reconciliation prematurely.
+
+Consequences:
+
+- `update` reports missing, different, local-only, and up-to-date Ariad files.
+- Missing files point toward `adopt --dry-run` and explicit Navigator approval before writing.
+- Different files are reviewed manually, preserving local truth by default.
+- Local-only files stay local unless their idea is generalizable enough to promote into canonical Ariad.
+- Patch generation or automated reconciliation remains future work.
+
 ### Maestro status is the getting-started close-loop command
 
 **Date:** 2026-05-21

@@ -4,6 +4,22 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-22 — Update command improved into actionable drift report
+
+`maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.
+
+This matters because update/reconciliation is the next bridge toward developing Mirror Mind under Ariad. The command still writes nothing, but its output now tells the Driver/Navigator what kind of review is needed: adopt missing files safely, reconcile differences without overwriting local truth, and keep or promote local-only ideas deliberately.
+
+Verification:
+
+```bash
+cd /Users/alissonvale/mirror
+PYTHONPATH=/Users/alissonvale/mirror/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro update --journey maestro
+```
+
+Result: 62 tests passed and `update --journey maestro` reported `Status: drift detected` with actionable next steps.
+
 ### 2026-05-21 — Maestro status command closes getting-started loop
 
 Maestro now has a `status` command that verifies the installed extension copy, source clone, Ariad root, migrations, and optional journey readiness.
