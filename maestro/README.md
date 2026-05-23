@@ -65,6 +65,9 @@ uv run python -m memory ext maestro checkpoint \
   --done "S1:Checkpoint Renderer" \
   --coherence "Roadmap:checked:CV2.E5.S3 updated" \
   --coherence "Release notes:not_applicable:No release boundary" \
+  --roadmap "cv:CV2:Ariad/Maestro Visualization:active:5/6" \
+  --roadmap "epic:E6:Roadmap Snapshot:next:1/3" \
+  --roadmap "story:S2:Roadmap Snapshot Renderer:next" \
   --recommended-next "Prepare the manual smoke route."
 ```
 
@@ -75,6 +78,8 @@ Evidence flags use `LABEL:STATE[:DETAIL]`. Valid states are `passed`, `attention
 Flow card flags use `CODE:TITLE`. Available lane flags are `--backlog`, `--ready`, `--doing`, `--validate-card`, and `--done`. Repeat a flag to add multiple cards to the same lane.
 
 Coherence flags use `SURFACE:STATE[:DETAIL]`. Valid states are `checked`, `attention`, `missing`, `not_applicable`, and `unknown`. Repeat `--coherence` for multiple rows.
+
+Roadmap flags use `LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]`. Valid levels are `cv`, `epic`, and `story`. Valid statuses are `done`, `active`, `next`, `planned`, `radar`, and `blocked`. Progress is optional and should only be supplied when the counts are trustworthy.
 
 ### `status`
 

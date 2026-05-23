@@ -198,9 +198,9 @@ Stories:
 
 | Code | Story | Status | Notes |
 |------|-------|--------|-------|
-| CV2.E6.S1 | Roadmap Snapshot Contract | Planned | Define roadmap item/status model, emoji legend, and explicit-input boundary. |
-| CV2.E6.S2 | Roadmap Snapshot Renderer | Planned | Render CV/Epic/Story hierarchy with statuses and current next story. |
-| CV2.E6.S3 | End-of-Story Integration | Planned | Show Roadmap Snapshot at story close or commit checkpoint. |
+| CV2.E6.S1 | Roadmap Snapshot Contract | Done | Define roadmap item/status model, emoji legend, progress model, and explicit-input boundary. |
+| CV2.E6.S2 | Roadmap Snapshot Renderer | Done | Render CV/Epic/Story hierarchy with progress bars, statuses, and current next story. |
+| CV2.E6.S3 | End-of-Story Integration | Done | Show Roadmap Snapshot at story close or commit checkpoint through `checkpoint --roadmap`. |
 
 The first version should use explicit roadmap data rather than parsing arbitrary Markdown. Automatic roadmap parsing remains out of scope until the data model is justified.
 

@@ -9,6 +9,7 @@ from typing import Literal
 
 from src.coherence import CoherenceItem, CoherenceMatrix, render_coherence_matrix
 from src.flow import build_flow_board_from_args, parse_flow_card, render_flow_board
+from src.roadmap import Progress, RoadmapItem, RoadmapSnapshot, nest_roadmap_items, render_roadmap_snapshot
 
 CheckpointName = Literal["plan", "implement", "validate", "review", "coherence", "commit"]
 ReleaseIntentKind = Literal["known", "emergent"]
@@ -117,6 +118,7 @@ class CheckpointView:
     validation_evidence: ValidationEvidence | None = None
     flow_board: object | None = None
     coherence_matrix: CoherenceMatrix | None = None
+    roadmap_snapshot: RoadmapSnapshot | None = None
     recommended_next: str | None = None
 
 
@@ -230,6 +232,10 @@ def render_checkpoint_view(view: CheckpointView) -> str:
         lines.append("")
         lines.extend(render_coherence_matrix(view.coherence_matrix).rstrip().splitlines())
 
+    if view.roadmap_snapshot:
+        lines.append("")
+        lines.extend(render_roadmap_snapshot(view.roadmap_snapshot).rstrip().splitlines())
+
     if view.recommended_next:
         lines.append("")
         lines.append("Recommended next")
@@ -294,6 +300,10 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
     if args.coherence:
         coherence_matrix = CoherenceMatrix(items=tuple(args.coherence))
 
+    roadmap_snapshot = None
+    if args.roadmap:
+        roadmap_snapshot = RoadmapSnapshot(items=nest_roadmap_items(tuple(args.roadmap)))
+
     return CheckpointView(
         checkpoint=args.checkpoint,
         work_map=WorkMap(
@@ -310,6 +320,7 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
         validation_evidence=validation_evidence,
         flow_board=flow_board,
         coherence_matrix=coherence_matrix,
+        roadmap_snapshot=roadmap_snapshot,
         recommended_next=args.recommended_next,
     )
 
@@ -328,6 +339,30 @@ def _parse_coherence_item(value: str) -> CoherenceItem:
         return CoherenceItem(surface=surface.strip(), state=state.strip(), detail=detail[0].strip() if detail else None)  # type: ignore[arg-type]
     except ValueError as exc:
         raise argparse.ArgumentTypeError("Coherence items must use SURFACE:STATE[:DETAIL]") from exc
+
+
+def _parse_progress(value: str | None) -> Progress | None:
+    if value is None:
+        return None
+    try:
+        done_text, total_text = value.split("/", maxsplit=1)
+        return Progress(done=int(done_text), total=int(total_text))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("Progress must use DONE/TOTAL, for example 1/3") from exc
+
+
+def _parse_roadmap_item(value: str) -> RoadmapItem:
+    try:
+        level, code, title, status, *progress = value.split(":", maxsplit=4)
+        return RoadmapItem(
+            level=level.strip(),  # type: ignore[arg-type]
+            code=code.strip(),
+            title=title.strip(),
+            status=status.strip(),  # type: ignore[arg-type]
+            progress=_parse_progress(progress[0].strip()) if progress else None,
+        )
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("Roadmap items must use LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]") from exc
 
 
 def cmd_checkpoint(api, argv: list[str]) -> int:
@@ -358,6 +393,7 @@ def cmd_checkpoint(api, argv: list[str]) -> int:
     parser.add_argument("--validate-card", dest="validate_lane", action="append", type=parse_flow_card, help="Validate lane card as CODE:TITLE")
     parser.add_argument("--done", action="append", type=parse_flow_card, help="Done card as CODE:TITLE")
     parser.add_argument("--coherence", action="append", type=_parse_coherence_item, help="Coherence surface as SURFACE:STATE[:DETAIL]")
+    parser.add_argument("--roadmap", action="append", type=_parse_roadmap_item, help="Roadmap item as LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]")
     args = parser.parse_args(argv)
 
     view = build_checkpoint_view_from_args(args)

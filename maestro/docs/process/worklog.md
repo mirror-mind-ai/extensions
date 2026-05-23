@@ -202,6 +202,38 @@ Result: 105 tests passed.
 
 Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --checkpoint coherence ...` with repeated coherence rows. The command rendered checked, not-applicable, and unknown surfaces without touching production state.
 
+### 2026-05-23 — Roadmap Snapshot contract added
+
+Completed CV2.E6.S1 with `Progress`, `RoadmapItem`, and `RoadmapSnapshot` models in `src/roadmap.py`.
+
+The contract defines CV/Epic/Story levels, status markers (`✅`, `🟡`, `👉`, `⚪`, `🔭`, `⛔`), optional trustworthy progress, and an explicit-input boundary. Progress is represented only when done/total counts are known, avoiding invented precision.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 111 tests passed.
+
+### 2026-05-23 — Roadmap Snapshot rendered and integrated into checkpoint view
+
+Completed CV2.E6.S2 and CV2.E6.S3 by adding `render_roadmap_snapshot()`, explicit `--roadmap LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]` flags, and Roadmap Snapshot integration into `memory ext maestro checkpoint`.
+
+The renderer supports CV/Epic/Story hierarchy, status markers, optional progress bars, and story-close orientation. Explicit flat CLI input is nested by nearest preceding parent so the runtime can render a readable hierarchy without parsing arbitrary Markdown.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 116 tests passed.
+
+Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --checkpoint commit ...` with Roadmap Snapshot data. The command rendered CV2 with E5 done and E6 next, including progress bars.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.

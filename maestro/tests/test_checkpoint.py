@@ -365,6 +365,54 @@ def test_cmd_checkpoint_accepts_coherence_items(ariad_api, capsys):
     assert "? Internal links" in out
 
 
+def test_render_checkpoint_view_includes_roadmap_snapshot():
+    from src.roadmap import Progress, RoadmapItem, RoadmapSnapshot
+
+    view = CheckpointView(
+        checkpoint="commit",
+        work_map=sample_work_map(),
+        roadmap_snapshot=RoadmapSnapshot(
+            items=(
+                RoadmapItem("cv", "CV2", "Ariad/Maestro Visualization", "active", Progress(5, 6)),
+                RoadmapItem("epic", "E6", "Roadmap Snapshot", "next", Progress(1, 3)),
+                RoadmapItem("story", "S2", "Roadmap Snapshot Renderer", "next"),
+            )
+        ),
+    )
+
+    rendered = render_checkpoint_view(view)
+
+    assert "Roadmap Snapshot" in rendered
+    assert "🟪 CV2  Ariad/Maestro Visualization  Epics: 5/6" in rendered
+    assert "🟦 E6  Roadmap Snapshot  Stories: 1/3" in rendered
+    assert "🟨 S2  Roadmap Snapshot Renderer  👉 Next" in rendered
+
+
+def test_cmd_checkpoint_accepts_roadmap_items(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "--checkpoint",
+            "commit",
+            "--story",
+            "S2 Roadmap Snapshot Renderer",
+            "--roadmap",
+            "cv:CV2:Ariad/Maestro Visualization:active:5/6",
+            "--roadmap",
+            "epic:E6:Roadmap Snapshot:next:1/3",
+            "--roadmap",
+            "story:S2:Roadmap Snapshot Renderer:next",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Roadmap Snapshot" in out
+    assert "🟪 CV2  Ariad/Maestro Visualization  Epics: 5/6" in out
+    assert "🟦 E6  Roadmap Snapshot  Stories: 1/3" in out
+    assert "🟨 S2  Roadmap Snapshot Renderer  👉 Next" in out
+
+
 def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):
     rc = cmd_checkpoint(
         ariad_api,
