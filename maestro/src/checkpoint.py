@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import argparse
+import sys
 from dataclasses import dataclass
 from typing import Literal
 
@@ -150,3 +152,77 @@ def render_checkpoint_view(view: CheckpointView) -> str:
         lines.append(view.recommended_next)
 
     return "\n".join(lines) + "\n"
+
+
+def _split_code_and_title(value: str, *, default_code: str) -> tuple[str, str]:
+    stripped = value.strip()
+    if not stripped:
+        return default_code, "Current work"
+    parts = stripped.split(maxsplit=1)
+    if len(parts) == 1:
+        return parts[0], parts[0]
+    return parts[0], parts[1]
+
+
+def _parse_epic_progress(value: str | None) -> EpicProgress | None:
+    if value is None:
+        return None
+    try:
+        done_text, total_text = value.split("/", maxsplit=1)
+        return EpicProgress(done=int(done_text), total=int(total_text))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("Epic progress must use DONE/TOTAL, for example 1/3") from exc
+
+
+def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
+    story_code, story_title = _split_code_and_title(args.story, default_code="S?")
+    release_intent = None
+    if args.release or args.release_kind:
+        release_intent = ReleaseIntent(
+            kind=args.release_kind or "known",
+            title=args.release,
+            scope=args.release_scope,
+            state=args.release_state,
+            note=args.release_note,
+        )
+
+    return CheckpointView(
+        checkpoint=args.checkpoint,
+        work_map=WorkMap(
+            cv_code=args.cv_code,
+            cv_title=args.cv_title,
+            epic_code=args.epic_code,
+            epic_title=args.epic_title,
+            story_code=story_code,
+            story_title=story_title,
+            epic_progress=args.epic_progress,
+        ),
+        status_sentence=args.status_sentence,
+        release_intent=release_intent,
+        recommended_next=args.recommended_next,
+    )
+
+
+def cmd_checkpoint(api, argv: list[str]) -> int:
+    """Render an Ariad/Maestro checkpoint orientation view."""
+    parser = argparse.ArgumentParser(description="Render an Ariad/Maestro checkpoint view")
+    parser.add_argument("--journey", help="Mirror journey slug. Reserved for future context lookup.")
+    parser.add_argument("--checkpoint", choices=_CHECKPOINTS, required=True)
+    parser.add_argument("--cv-code", default="CV?")
+    parser.add_argument("--cv-title", default="Current Capability Value")
+    parser.add_argument("--epic-code", default="E?")
+    parser.add_argument("--epic-title", default="Current Epic")
+    parser.add_argument("--epic-progress", type=_parse_epic_progress, help="Epic progress as DONE/TOTAL, for example 1/3")
+    parser.add_argument("--story", default="S? Current Story", help='Story code and title, for example "S1 Checkpoint Renderer"')
+    parser.add_argument("--status-sentence")
+    parser.add_argument("--recommended-next")
+    parser.add_argument("--release-kind", choices=("known", "emergent"))
+    parser.add_argument("--release", help="Release title or emergent release note")
+    parser.add_argument("--release-scope")
+    parser.add_argument("--release-state")
+    parser.add_argument("--release-note")
+    args = parser.parse_args(argv)
+
+    view = build_checkpoint_view_from_args(args)
+    sys.stdout.write(render_checkpoint_view(view))
+    return 0

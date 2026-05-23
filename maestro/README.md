@@ -43,6 +43,25 @@ A useful boundary:
 
 ## Commands
 
+### `checkpoint`
+
+```bash
+uv run python -m memory ext maestro checkpoint \
+  --journey maestro \
+  --checkpoint validate \
+  --cv-code CV2 \
+  --cv-title "Ariad/Maestro Visualization" \
+  --epic-code E2 \
+  --epic-title "Checkpoint View MVP" \
+  --epic-progress 1/3 \
+  --story "S2 checkpoint Command" \
+  --release-kind emergent \
+  --status-sentence "S2 implemented and validated. We are at the validation checkpoint." \
+  --recommended-next "Prepare the manual smoke route."
+```
+
+Renders a compact Ariad/Maestro checkpoint orientation view. The first version is intentionally explicit: it does not infer roadmap state from project files yet. It exists to make the visualization grammar usable before richer state discovery is added.
+
 ### `status`
 
 ```bash
@@ -239,6 +258,7 @@ uv run python -m memory ext maestro migrate
 
 Implemented:
 
+- `checkpoint` — textual Ariad/Maestro checkpoint orientation view
 - `status` — end-to-end install, source clone, Ariad root, migration, and readiness check
 - `doctor` — read-only readiness check across repository adoption and workspace overlay
 - `adopt` — copy missing templates without overwriting existing files

@@ -51,6 +51,23 @@ Result: 70 tests passed.
 
 Also updated current development commands in briefing and development guide to use the Mirror dev clone at `/Users/alissonvale/Code/mirror-dev` instead of the personal production clone.
 
+### 2026-05-23 — Checkpoint command added
+
+Completed CV2.E2.S2 and CV2.E2.S3 by registering `memory ext maestro checkpoint` and documenting it in README. The command renders the checkpoint view from explicit inputs: checkpoint, work-map fields, optional epic progress, story, release intent, status sentence, and recommended next action.
+
+The first version is intentionally explicit and does not infer roadmap state from project files. This keeps the runtime surface useful while preserving the boundary established in CV2.E1.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 72 tests passed.
+
+Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --journey maestro`. The command rendered Bird's-Eye Map, yellow Story card, Ariad Stage Ribbon, emergent Release Intent, and Recommended Next without touching production state.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.

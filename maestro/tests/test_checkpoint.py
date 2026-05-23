@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.checkpoint import CheckpointView, EpicProgress, ReleaseIntent, WorkMap, render_checkpoint_view
+from src.checkpoint import CheckpointView, EpicProgress, ReleaseIntent, WorkMap, cmd_checkpoint, render_checkpoint_view
 
 
 def sample_work_map(progress: EpicProgress | None = None) -> WorkMap:
@@ -112,3 +112,69 @@ def test_epic_progress_rejects_invalid_values():
         EpicProgress(done=-1, total=3)
     with pytest.raises(ValueError, match="exceed"):
         EpicProgress(done=4, total=3)
+
+
+def test_cmd_checkpoint_renders_explicit_checkpoint_view(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "--journey",
+            "maestro",
+            "--checkpoint",
+            "validate",
+            "--cv-code",
+            "CV2",
+            "--cv-title",
+            "Ariad/Maestro Visualization",
+            "--epic-code",
+            "E2",
+            "--epic-title",
+            "Checkpoint View MVP",
+            "--epic-progress",
+            "1/3",
+            "--story",
+            "S2 checkpoint Command",
+            "--release-kind",
+            "emergent",
+            "--status-sentence",
+            "S2 implemented and validated. We are at the validation checkpoint.",
+            "--recommended-next",
+            "Prepare the manual smoke route.",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Maestro checkpoint" in out
+    assert "🟪[CV2]  Ariad/Maestro Visualization" in out
+    assert "  🟦[E2]   Checkpoint View MVP  Stories: 1/3" in out
+    assert "    🟨[S2]  checkpoint Command" in out
+    assert "Ariad: ✓ Plan | ✓ Implement | ◉ Validate | ○ Review | ○ Coherence | ○ Commit" in out
+    assert "[emergent] no version selected yet" in out
+    assert "Recommended next" in out
+
+
+def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "--checkpoint",
+            "plan",
+            "--story",
+            "S1 Checkpoint Renderer",
+            "--release-kind",
+            "known",
+            "--release",
+            "v0.1.0 - Ariad Visualization",
+            "--release-scope",
+            "CV2.E2",
+            "--release-state",
+            "building",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "[known] v0.1.0 - Ariad Visualization" in out
+    assert "Scope: CV2.E2" in out
+    assert "State: building" in out

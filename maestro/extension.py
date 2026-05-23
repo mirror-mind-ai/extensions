@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.adopt import cmd_adopt
+from src.checkpoint import cmd_checkpoint
 from src.context import provide_ariad_workspace
 from src.doctor import cmd_doctor
 from src.init import cmd_init
@@ -43,5 +44,10 @@ def register(api: ExtensionAPI) -> None:
         "status",
         cmd_status,
         summary="Inspect Maestro installation status and optional journey readiness.",
+    )
+    api.register_cli(
+        "checkpoint",
+        cmd_checkpoint,
+        summary="Render an Ariad/Maestro checkpoint orientation view.",
     )
     api.register_mirror_context("ariad_workspace", provide_ariad_workspace)
