@@ -184,8 +184,8 @@ Stories:
 
 | Code | Story | Status | Notes |
 |------|-------|--------|-------|
-| CV2.E5.S1 | Coherence Matrix Contract | Planned | Define rows, states, and not-applicable handling. |
-| CV2.E5.S2 | Coherence Matrix Renderer | Planned | Render roadmap, docs, worklog, decisions, journey, release notes, and links. |
+| CV2.E5.S1 | Coherence Matrix Contract | Done | Define rows, states, unknown handling, and not-applicable handling. |
+| CV2.E5.S2 | Coherence Matrix Renderer | Next | Render roadmap, docs, worklog, decisions, journey, release notes, and links. |
 | CV2.E5.S3 | Closeout View Integration | Planned | Integrate matrix into the coherence checkpoint view. |
 
 ---

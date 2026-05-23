@@ -147,6 +147,21 @@ Result: 92 tests passed.
 
 Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --checkpoint implement ...` with `--doing` and repeated `--done` cards. The command rendered the horizontal flow board without touching production state.
 
+### 2026-05-23 — Coherence matrix contract added
+
+Completed CV2.E5.S1 with `CoherenceItem` and `CoherenceMatrix` models in `src/coherence.py`.
+
+The contract represents coherence-check surfaces without computing a global ready state. States are explicit: `checked` uses `✓`, `attention` uses `⚠`, `missing` uses `✕`, `not_applicable` uses `-`, and `unknown` uses `?`. This keeps closeout honest and prevents false green when Maestro does not know whether a surface was checked.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 99 tests passed.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.
