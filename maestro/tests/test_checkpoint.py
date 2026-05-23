@@ -13,6 +13,7 @@ from src.checkpoint import (
     WorkMap,
     cmd_checkpoint,
     render_checkpoint_view,
+    render_validation_panel,
 )
 
 
@@ -196,6 +197,39 @@ def test_validation_evidence_groups_automated_manual_blocker_and_risk():
 def test_attention_marker_does_not_conflict_with_yellow_story_card():
     assert EvidenceItem(label="Manual smoke", state="attention").marker == "⚠"
     assert "🟨" not in EvidenceItem(label="Manual smoke", state="attention").marker
+
+
+def test_render_validation_panel_shows_all_evidence_sections():
+    evidence = ValidationEvidence(
+        automated=EvidenceItem("Automated checks", "passed", "76 tests passed"),
+        manual=EvidenceItem("Manual validation", "not_run"),
+        blocker="none",
+        risk=EvidenceItem("Risk posture", "attention", "manual validation pending"),
+    )
+
+    rendered = render_validation_panel(evidence)
+
+    assert "Validation Panel" in rendered
+    assert "Automated checks: ✅ passed - 76 tests passed" in rendered
+    assert "Manual validation: ○ not run" in rendered
+    assert "Blocker: none" in rendered
+    assert "Risk posture: ⚠ attention - manual validation pending" in rendered
+    assert "🟨" not in rendered
+
+
+def test_render_validation_panel_uses_unknown_for_missing_evidence():
+    rendered = render_validation_panel(ValidationEvidence())
+
+    assert "Automated checks: ? unknown" in rendered
+    assert "Manual validation: ? unknown" in rendered
+    assert "Blocker: none" in rendered
+    assert "Risk posture: ? unknown" in rendered
+
+
+def test_render_validation_panel_shows_blocker_text():
+    rendered = render_validation_panel(ValidationEvidence(blocker="release not published"))
+
+    assert "Blocker: release not published" in rendered
 
 
 def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):

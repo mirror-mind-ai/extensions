@@ -157,8 +157,8 @@ Stories:
 | Code | Story | Status | Notes |
 |------|-------|--------|-------|
 | CV2.E3.S1 | Validation State Model | Done | Represent automated, manual, blocker, and risk states honestly; attention uses `⚠` to avoid conflict with yellow Story cards. |
-| CV2.E3.S2 | Validation Panel Renderer | Next | Render passed, attention, blocked, not run, and unknown states. |
-| CV2.E3.S3 | Validation View Integration | Planned | Integrate the panel into checkpoint output. |
+| CV2.E3.S2 | Validation Panel Renderer | Done | Render passed, attention, blocked, not run, and unknown states without conflicting with Story taxonomy. |
+| CV2.E3.S3 | Validation View Integration | Next | Integrate the panel into checkpoint output. |
 
 ### CV2.E4: Flow Board
 

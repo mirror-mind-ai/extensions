@@ -83,6 +83,21 @@ PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonva
 
 Result: 76 tests passed.
 
+### 2026-05-23 — Validation panel renderer added
+
+Completed CV2.E3.S2 with `render_validation_panel()`. The panel renders automated checks, manual validation, blocker, and risk posture while using explicit unknown states when evidence is absent.
+
+Attention uses `⚠`, preserving yellow `🟨` for Story taxonomy only.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 79 tests passed.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.

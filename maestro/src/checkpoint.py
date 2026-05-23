@@ -147,6 +147,37 @@ def _render_stage_ribbon(current: CheckpointName) -> str:
     return "Ariad: " + " | ".join(parts)
 
 
+def _render_evidence_item(item: EvidenceItem) -> str:
+    line = f"{item.label}: {item.marker} {item.state.replace('_', ' ')}"
+    if item.detail:
+        line += f" - {item.detail}"
+    return line
+
+
+def render_validation_panel(evidence: ValidationEvidence) -> str:
+    """Render validation evidence as a compact panel."""
+
+    lines = ["Validation Panel"]
+    if evidence.automated:
+        lines.append(_render_evidence_item(evidence.automated))
+    else:
+        lines.append("Automated checks: ? unknown")
+
+    if evidence.manual:
+        lines.append(_render_evidence_item(evidence.manual))
+    else:
+        lines.append("Manual validation: ? unknown")
+
+    lines.append(f"Blocker: {evidence.blocker or 'none'}")
+
+    if evidence.risk:
+        lines.append(_render_evidence_item(evidence.risk))
+    else:
+        lines.append("Risk posture: ? unknown")
+
+    return "\n".join(lines) + "\n"
+
+
 def _render_release_intent(release: ReleaseIntent) -> list[str]:
     lines = ["Release Intent"]
     if release.kind == "known":
