@@ -115,6 +115,21 @@ Result: 81 tests passed.
 
 Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --checkpoint validate ...` with validation evidence. The command rendered Automated checks, Manual validation, Blocker, and Risk posture without touching production state.
 
+### 2026-05-23 — Flow board renderer added
+
+Completed CV2.E4.S1 with a pure flow board renderer in `src/flow.py` and unit coverage in `tests/test_flow.py`.
+
+The renderer supports explicit lanes for Backlog, Ready, Doing, Validate, and Done, multiple cards per lane, empty lanes, and yellow Story cards. It remains CLI-free and inference-free so the board does not pretend to know roadmap state before explicit card input exists.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 87 tests passed.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.
