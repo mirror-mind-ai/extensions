@@ -21,14 +21,7 @@ The roadmap describes meaningful progress for the Maestro extension using the Ar
 
 The current focus is **CV2, Ariad/Maestro Visualization**: consolidate visualization as an operational product grammar while preserving the boundary between Ariad as method and Maestro as runtime implementation.
 
-CV2 is complete when:
-
-- the field-tested visualization patterns from Mirror Mind self-update are documented as a coherent Maestro grammar;
-- method-level concepts and runtime-rendering choices are separated explicitly;
-- the grammar distinguishes taxonomy, lifecycle state, flow state, release state, validation evidence, and health signals;
-- Maestro has a first implementable slice that can render checkpoint-aware orientation without becoming a generic dashboard;
-- product docs explain why visualization exists and when each view should appear;
-- implementation has shipped in small validated stories.
+CV2 is functionally complete. The remaining closeout work is coherence, documentation polish, and deciding whether the visualization grammar should promote any method-level concepts upstream to Ariad.
 
 ## Boundary Rule
 
@@ -99,7 +92,7 @@ CV2 turns visualization field notes from Mirror Mind self-update into a stable M
 
 ### CV2.E1: Visualization Grammar and Boundary
 
-**Status:** Active
+**Status:** Done
 
 Purpose: define what Maestro may render, what Ariad owns as method, and what remains experimental.
 
@@ -120,7 +113,7 @@ Done condition:
 
 ### CV2.E2: Checkpoint View MVP
 
-**Status:** Next
+**Status:** Done
 
 Purpose: render the first checkpoint-aware textual view for Driver/Navigator orientation.
 
@@ -148,7 +141,7 @@ Candidate flags:
 
 ### CV2.E3: Validation Panel
 
-**Status:** Next
+**Status:** Done
 
 Purpose: make validation evidence legible without flattening everything into pass/fail.
 
@@ -162,7 +155,7 @@ Stories:
 
 ### CV2.E4: Flow Board
 
-**Status:** Planned
+**Status:** Done
 
 Purpose: render neighboring work in horizontal lanes.
 
@@ -176,7 +169,7 @@ Stories:
 
 ### CV2.E5: Coherence Matrix
 
-**Status:** Active
+**Status:** Done
 
 Purpose: support the closeout checkpoint by showing which project memory surfaces were checked.
 
@@ -190,7 +183,7 @@ Stories:
 
 ### CV2.E6: Roadmap Snapshot
 
-**Status:** Planned
+**Status:** Done
 
 Purpose: show the hierarchical CV/Epic/Story roadmap state at the end of each story.
 

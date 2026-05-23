@@ -15,30 +15,33 @@ It gives a Mirror user deterministic commands for:
 - adopting Ariad in existing projects without overwriting local files;
 - comparing local Ariad instances against canonical templates;
 - configuring Ariad as a local workspace overlay for a Mirror journey;
-- closing install and update flows with an executable status check.
+- closing install and update flows with an executable status check;
+- rendering checkpoint-oriented views for Driver/Navigator work.
 
-The next product arc extends this operational base into Ariad/Maestro visualization: helping the Driver and Navigator see where work is, which checkpoint is active, what evidence exists, what remains unresolved, and which next movement preserves coherence.
+The current product arc extends the operational base into Ariad/Maestro visualization: helping the Driver and Navigator see where work is, which checkpoint is active, what evidence exists, what remains unresolved, which roadmap movement just happened, and which next movement preserves coherence.
 
 ## Current Objective
 
-The current objective is to consolidate the visualization learnings produced while developing Mirror Mind and implement them in Maestro as a stable product grammar.
+The current objective is to close the first Ariad/Maestro visualization capability and decide what should happen next.
 
-Recent Mirror Mind self-update and release work produced a set of useful Ariad/Maestro components:
+CV2 Ariad/Maestro Visualization is now functionally implemented. The work consolidated the visualization learnings produced while developing Mirror Mind and turned them into a stable Maestro runtime surface.
+
+Implemented visual components:
 
 - Bird's-Eye Map for locating CV, Epic, and Story;
-- Horizontal Flow Board for showing work moving across states;
-- Transition View for showing the next coherent movement;
-- Release Intent for making release regime explicit;
-- checkpoint-specific views for plan, implementation, validation, review, coherence, and commit moments;
-- Coherence Matrix for checking roadmap, docs, worklog, decisions, journey, and release notes;
-- compact checkpoint sentence for naming story state and checkpoint state together;
-- status and health signals for compressing runtime state into actionable indicators.
+- Ariad Stage Ribbon for checkpoint state;
+- compact checkpoint sentence for story/checkpoint orientation;
+- Release Intent for known or emergent release context;
+- Validation Panel for automated evidence, manual validation, blockers, and risk posture;
+- Horizontal Flow Board for Backlog, Ready, Doing, Validate, and Done lanes;
+- Coherence Matrix for closeout surfaces without a false global ready state;
+- Roadmap Snapshot for end-of-story CV/Epic/Story orientation with progress bars.
 
-Maestro should turn these field notes into an operational surface. The goal is not decorative reporting. The goal is to make Ariad easier to navigate without hiding the Driver/Navigator method.
+The first implementation is intentionally explicit. It accepts CLI flags such as `--checkpoint`, `--story`, `--automated`, `--manual`, `--coherence`, `--roadmap`, and flow-card lane flags. It does not parse arbitrary roadmap Markdown and does not infer validation or coherence status without evidence.
 
 ## Current State
 
-The first operational slice is implemented and published in the `mirror-mind-ai/extensions` monorepo.
+The first operational foundation is implemented and published in the `mirror-mind-ai/extensions` monorepo.
 
 Implemented commands:
 
@@ -47,11 +50,18 @@ Implemented commands:
 - `init` — safe project initialization from Ariad templates;
 - `adopt` — safe adoption into existing projects, with `--dry-run`;
 - `update` — report-only comparison against canonical templates;
-- `overlay` — local Ariad workspace overlay for Mirror journeys.
+- `overlay` — local Ariad workspace overlay for Mirror journeys;
+- `checkpoint` — explicit Ariad/Maestro checkpoint view renderer.
 
-The extension has been validated against real projects: Conjunto, Mirror Mind, Maestro itself, and the Diário/Raphael pilot.
+The extension has been validated against real projects: Conjunto, Mirror Mind, Maestro itself, and the Diário/Raphael pilot. CV2 visualization work has test coverage and isolated smoke validation through temporary Mirror homes.
 
-The next slice should be discovery and consolidation of the visualization grammar before behavior expands.
+The next slice should be a coherence closeout pass for CV2:
+
+- align roadmap statuses;
+- confirm docs and README match implemented behavior;
+- decide whether any visual concepts should be proposed upstream to Ariad;
+- commit the context updates;
+- then choose the next CV or follow-up story.
 
 ## Architecture Premises
 
@@ -61,6 +71,7 @@ The next slice should be discovery and consolidation of the visualization gramma
 - Existing project files must not be overwritten by adoption commands.
 - Workspace overlay is local Mirror extension state and must not imply repository adoption.
 - Visualization should be derived from Ariad lifecycle state, project files, journey context, command results, or explicit user input. It should not invent project truth.
+- The first visualization implementation uses explicit input over inference. Automatic parsing of arbitrary roadmap Markdown remains out of scope until the data model is justified.
 - The extension lives inside the monorepo at `maestro/`, with source under `maestro/src/` and tests under `maestro/tests/`.
 
 ## Product Premises
@@ -70,12 +81,13 @@ Maestro serves people using Mirror Mind Builder Mode who want to adopt and opera
 Its behavior should be:
 
 - safe by default;
-- explicit about what it will write;
+- explicit about what it will write or infer;
 - readable for humans;
 - deterministic where possible;
 - deferential to local project docs when they already exist;
 - visual enough to orient the Navigator without becoming a generic dashboard;
-- checkpoint-aware rather than one-size-fits-all.
+- checkpoint-aware rather than one-size-fits-all;
+- honest about unknown state.
 
 ## Boundaries
 
@@ -85,7 +97,8 @@ Its behavior should be:
 - Preserve compatibility with Mirror extension loading and validation.
 - Avoid introducing user-specific pilot data into the public extension repository.
 - Do not move methodological authority from Ariad into Maestro. If a change defines the method itself, route it to Ariad.
-- Do not implement visualization as decoration. Every component must help the Driver/Navigator decide, validate, review, or close work.
+- Do not implement visualization as decoration. Every component must help the Driver/Navigator decide, validate, review, orient, or close work.
+- Do not claim validation, coherence, roadmap progress, or release state without explicit evidence.
 
 ## Operating Notes
 
@@ -113,6 +126,17 @@ ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro ado
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro update --journey maestro
 ```
 
+Checkpoint smoke example:
+
+```bash
+uv run python -m memory ext maestro checkpoint \
+  --checkpoint commit \
+  --story "S3 End-of-Story Integration" \
+  --roadmap "cv:CV2:Ariad/Maestro Visualization:active:6/6" \
+  --roadmap "epic:E6:Roadmap Snapshot:done:3/3" \
+  --roadmap "story:S3:End-of-Story Integration:done"
+```
+
 ## Glossary
 
 - **Ariad** — canonical method and template repository.
@@ -121,3 +145,4 @@ ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro upd
 - **Canonical templates** — templates under `docs/project-templates/` in the Ariad repository.
 - **Workspace overlay** — local Mirror extension state that applies Ariad to a journey without changing repository files.
 - **Visualization grammar** — the set of Ariad/Maestro views and signals that orient Driver/Navigator work across checkpoints.
+- **Roadmap Snapshot** — end-of-story CV/Epic/Story view with status markers and optional progress bars.
