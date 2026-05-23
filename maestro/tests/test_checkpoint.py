@@ -4,7 +4,16 @@ from __future__ import annotations
 
 import pytest
 
-from src.checkpoint import CheckpointView, EpicProgress, ReleaseIntent, WorkMap, cmd_checkpoint, render_checkpoint_view
+from src.checkpoint import (
+    CheckpointView,
+    EpicProgress,
+    EvidenceItem,
+    ReleaseIntent,
+    ValidationEvidence,
+    WorkMap,
+    cmd_checkpoint,
+    render_checkpoint_view,
+)
 
 
 def sample_work_map(progress: EpicProgress | None = None) -> WorkMap:
@@ -152,6 +161,41 @@ def test_cmd_checkpoint_renders_explicit_checkpoint_view(ariad_api, capsys):
     assert "Ariad: ✓ Plan | ✓ Implement | ◉ Validate | ○ Review | ○ Coherence | ○ Commit" in out
     assert "[emergent] no version selected yet" in out
     assert "Recommended next" in out
+
+
+def test_evidence_item_exposes_marker_for_each_validation_state():
+    assert EvidenceItem(label="Automated checks", state="passed").marker == "✅"
+    assert EvidenceItem(label="Manual smoke", state="attention").marker == "⚠"
+    assert EvidenceItem(label="Release blocker", state="blocked").marker == "⛔"
+    assert EvidenceItem(label="Manual validation", state="not_run").marker == "○"
+    assert EvidenceItem(label="Risk posture", state="unknown").marker == "?"
+
+
+def test_evidence_item_rejects_unknown_state():
+    with pytest.raises(ValueError, match="Unknown validation state"):
+        EvidenceItem(label="Manual smoke", state="yellow")  # type: ignore[arg-type]
+
+
+def test_validation_evidence_groups_automated_manual_blocker_and_risk():
+    evidence = ValidationEvidence(
+        automated=EvidenceItem("Automated checks", "passed", "72 tests passed"),
+        manual=EvidenceItem("Manual smoke", "not_run"),
+        blocker="v0.9.1 is not published yet",
+        risk=EvidenceItem("Risk posture", "attention", "release-state blocker only"),
+    )
+
+    assert evidence.automated is not None
+    assert evidence.automated.marker == "✅"
+    assert evidence.manual is not None
+    assert evidence.manual.marker == "○"
+    assert evidence.blocker == "v0.9.1 is not published yet"
+    assert evidence.risk is not None
+    assert evidence.risk.marker == "⚠"
+
+
+def test_attention_marker_does_not_conflict_with_yellow_story_card():
+    assert EvidenceItem(label="Manual smoke", state="attention").marker == "⚠"
+    assert "🟨" not in EvidenceItem(label="Manual smoke", state="attention").marker
 
 
 def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):

@@ -68,6 +68,21 @@ Result: 72 tests passed.
 
 Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --journey maestro`. The command rendered Bird's-Eye Map, yellow Story card, Ariad Stage Ribbon, emergent Release Intent, and Recommended Next without touching production state.
 
+### 2026-05-23 — Validation state model added
+
+Completed CV2.E3.S1 with `EvidenceItem` and `ValidationEvidence` models in `src/checkpoint.py`. The model separates automated evidence, manual evidence, blockers, and risk posture before rendering the full Validation Panel.
+
+Validation states now have explicit markers: `passed` uses `✅`, `attention` uses `⚠`, `blocked` uses `⛔`, `not_run` uses `○`, and `unknown` uses `?`. The attention marker deliberately avoids the yellow square so it does not conflict with the yellow Story taxonomy card `🟨[S]`.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 76 tests passed.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.

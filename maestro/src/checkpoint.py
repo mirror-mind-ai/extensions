@@ -9,6 +9,7 @@ from typing import Literal
 
 CheckpointName = Literal["plan", "implement", "validate", "review", "coherence", "commit"]
 ReleaseIntentKind = Literal["known", "emergent"]
+ValidationState = Literal["passed", "attention", "blocked", "not_run", "unknown"]
 
 _CHECKPOINTS: tuple[CheckpointName, ...] = (
     "plan",
@@ -26,6 +27,40 @@ _CHECKPOINT_LABELS: dict[CheckpointName, str] = {
     "coherence": "Coherence",
     "commit": "Commit",
 }
+_VALIDATION_STATE_MARKERS: dict[ValidationState, str] = {
+    "passed": "✅",
+    "attention": "⚠",
+    "blocked": "⛔",
+    "not_run": "○",
+    "unknown": "?",
+}
+
+
+@dataclass(frozen=True)
+class EvidenceItem:
+    """One validation evidence line."""
+
+    label: str
+    state: ValidationState
+    detail: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.state not in _VALIDATION_STATE_MARKERS:
+            raise ValueError(f"Unknown validation state: {self.state}")
+
+    @property
+    def marker(self) -> str:
+        return _VALIDATION_STATE_MARKERS[self.state]
+
+
+@dataclass(frozen=True)
+class ValidationEvidence:
+    """Validation evidence grouped by source and risk."""
+
+    automated: EvidenceItem | None = None
+    manual: EvidenceItem | None = None
+    blocker: str | None = None
+    risk: EvidenceItem | None = None
 
 
 @dataclass(frozen=True)
