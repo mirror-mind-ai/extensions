@@ -7,6 +7,7 @@ import sys
 from dataclasses import dataclass
 from typing import Literal
 
+from src.coherence import CoherenceItem, CoherenceMatrix, render_coherence_matrix
 from src.flow import build_flow_board_from_args, parse_flow_card, render_flow_board
 
 CheckpointName = Literal["plan", "implement", "validate", "review", "coherence", "commit"]
@@ -115,6 +116,7 @@ class CheckpointView:
     release_intent: ReleaseIntent | None = None
     validation_evidence: ValidationEvidence | None = None
     flow_board: object | None = None
+    coherence_matrix: CoherenceMatrix | None = None
     recommended_next: str | None = None
 
 
@@ -224,6 +226,10 @@ def render_checkpoint_view(view: CheckpointView) -> str:
         lines.append("")
         lines.extend(render_flow_board(view.flow_board).rstrip().splitlines())
 
+    if view.coherence_matrix:
+        lines.append("")
+        lines.extend(render_coherence_matrix(view.coherence_matrix).rstrip().splitlines())
+
     if view.recommended_next:
         lines.append("")
         lines.append("Recommended next")
@@ -284,6 +290,10 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
         )
         flow_board = build_flow_board_from_args(flow_args)
 
+    coherence_matrix = None
+    if args.coherence:
+        coherence_matrix = CoherenceMatrix(items=tuple(args.coherence))
+
     return CheckpointView(
         checkpoint=args.checkpoint,
         work_map=WorkMap(
@@ -299,6 +309,7 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
         release_intent=release_intent,
         validation_evidence=validation_evidence,
         flow_board=flow_board,
+        coherence_matrix=coherence_matrix,
         recommended_next=args.recommended_next,
     )
 
@@ -309,6 +320,14 @@ def _parse_evidence_item(value: str) -> EvidenceItem:
         return EvidenceItem(label=label.strip(), state=state.strip(), detail=detail[0].strip() if detail else None)  # type: ignore[arg-type]
     except ValueError as exc:
         raise argparse.ArgumentTypeError("Evidence must use LABEL:STATE[:DETAIL]") from exc
+
+
+def _parse_coherence_item(value: str) -> CoherenceItem:
+    try:
+        surface, state, *detail = value.split(":", maxsplit=2)
+        return CoherenceItem(surface=surface.strip(), state=state.strip(), detail=detail[0].strip() if detail else None)  # type: ignore[arg-type]
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("Coherence items must use SURFACE:STATE[:DETAIL]") from exc
 
 
 def cmd_checkpoint(api, argv: list[str]) -> int:
@@ -338,6 +357,7 @@ def cmd_checkpoint(api, argv: list[str]) -> int:
     parser.add_argument("--doing", action="append", type=parse_flow_card, help="Doing card as CODE:TITLE")
     parser.add_argument("--validate-card", dest="validate_lane", action="append", type=parse_flow_card, help="Validate lane card as CODE:TITLE")
     parser.add_argument("--done", action="append", type=parse_flow_card, help="Done card as CODE:TITLE")
+    parser.add_argument("--coherence", action="append", type=_parse_coherence_item, help="Coherence surface as SURFACE:STATE[:DETAIL]")
     args = parser.parse_args(argv)
 
     view = build_checkpoint_view_from_args(args)

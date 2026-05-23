@@ -186,7 +186,7 @@ Stories:
 |------|-------|--------|-------|
 | CV2.E5.S1 | Coherence Matrix Contract | Done | Define rows, states, unknown handling, and not-applicable handling. |
 | CV2.E5.S2 | Coherence Matrix Renderer | Done | Render roadmap, docs, worklog, decisions, journey, release notes, and links without global ready state. |
-| CV2.E5.S3 | Closeout View Integration | Next | Integrate matrix into the coherence checkpoint view. |
+| CV2.E5.S3 | Closeout View Integration | Done | Integrated matrix into checkpoint output and CLI flags. |
 
 ### CV2.E6: Roadmap Snapshot
 

@@ -319,6 +319,52 @@ def test_cmd_checkpoint_accepts_explicit_flow_cards(ariad_api, capsys):
     assert "🟨[S3] Validation Vi…" in out
 
 
+def test_render_checkpoint_view_includes_coherence_matrix():
+    from src.coherence import CoherenceItem, CoherenceMatrix
+
+    view = CheckpointView(
+        checkpoint="coherence",
+        work_map=sample_work_map(),
+        coherence_matrix=CoherenceMatrix(
+            items=(
+                CoherenceItem("Roadmap", "checked", "CV2.E5.S3 updated"),
+                CoherenceItem("Release notes", "not_applicable", "No release boundary"),
+            )
+        ),
+    )
+
+    rendered = render_checkpoint_view(view)
+
+    assert "Coherence Matrix" in rendered
+    assert "✓ Roadmap - CV2.E5.S3 updated" in rendered
+    assert "- Release notes - No release boundary" in rendered
+
+
+def test_cmd_checkpoint_accepts_coherence_items(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "--checkpoint",
+            "coherence",
+            "--story",
+            "S3 Closeout View Integration",
+            "--coherence",
+            "Roadmap:checked:CV2.E5.S3 updated",
+            "--coherence",
+            "Release notes:not_applicable:No release boundary",
+            "--coherence",
+            "Internal links:unknown",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Coherence Matrix" in out
+    assert "✓ Roadmap - CV2.E5.S3 updated" in out
+    assert "- Release notes - No release boundary" in out
+    assert "? Internal links" in out
+
+
 def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):
     rc = cmd_checkpoint(
         ariad_api,

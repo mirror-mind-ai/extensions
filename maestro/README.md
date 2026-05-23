@@ -63,6 +63,8 @@ uv run python -m memory ext maestro checkpoint \
   --risk "Risk posture:attention:manual validation pending" \
   --doing "S2:checkpoint Command" \
   --done "S1:Checkpoint Renderer" \
+  --coherence "Roadmap:checked:CV2.E5.S3 updated" \
+  --coherence "Release notes:not_applicable:No release boundary" \
   --recommended-next "Prepare the manual smoke route."
 ```
 
@@ -71,6 +73,8 @@ Renders a compact Ariad/Maestro checkpoint orientation view. The first version i
 Evidence flags use `LABEL:STATE[:DETAIL]`. Valid states are `passed`, `attention`, `blocked`, `not_run`, and `unknown`.
 
 Flow card flags use `CODE:TITLE`. Available lane flags are `--backlog`, `--ready`, `--doing`, `--validate-card`, and `--done`. Repeat a flag to add multiple cards to the same lane.
+
+Coherence flags use `SURFACE:STATE[:DETAIL]`. Valid states are `checked`, `attention`, `missing`, `not_applicable`, and `unknown`. Repeat `--coherence` for multiple rows.
 
 ### `status`
 

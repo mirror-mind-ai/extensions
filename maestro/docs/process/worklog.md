@@ -185,6 +185,23 @@ PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonva
 
 Result: 103 tests passed.
 
+### 2026-05-23 — Coherence matrix integrated into checkpoint view
+
+Completed CV2.E5.S3 by adding `coherence_matrix` to `CheckpointView` and exposing repeated `--coherence SURFACE:STATE[:DETAIL]` flags in `memory ext maestro checkpoint`.
+
+The command now renders Coherence Matrix in the coherence checkpoint while preserving the no-global-ready-state rule.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 105 tests passed.
+
+Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --checkpoint coherence ...` with repeated coherence rows. The command rendered checked, not-applicable, and unknown surfaces without touching production state.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.
