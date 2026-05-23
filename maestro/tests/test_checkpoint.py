@@ -281,6 +281,44 @@ def test_cmd_checkpoint_accepts_validation_evidence(ariad_api, capsys):
     assert "Risk posture: ⚠ attention - manual validation pending" in out
 
 
+def test_render_checkpoint_view_includes_flow_board():
+    from src.flow import FlowBoard, FlowCard
+
+    view = CheckpointView(
+        checkpoint="implement",
+        work_map=sample_work_map(),
+        flow_board=FlowBoard(doing=(FlowCard("S4", "Flow Board Renderer"),), done=(FlowCard("S3", "Validation View Integration"),)),
+    )
+
+    rendered = render_checkpoint_view(view)
+
+    assert "Flow Board" in rendered
+    assert "🟨[S4] Flow Board Re…" in rendered
+    assert "🟨[S3] Validation Vi…" in rendered
+
+
+def test_cmd_checkpoint_accepts_explicit_flow_cards(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "--checkpoint",
+            "implement",
+            "--story",
+            "S4 Flow Board Renderer",
+            "--doing",
+            "S4:Flow Board Renderer",
+            "--done",
+            "S3:Validation View Integration",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Flow Board" in out
+    assert "🟨[S4] Flow Board Re…" in out
+    assert "🟨[S3] Validation Vi…" in out
+
+
 def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):
     rc = cmd_checkpoint(
         ariad_api,

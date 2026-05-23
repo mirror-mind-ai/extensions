@@ -61,12 +61,16 @@ uv run python -m memory ext maestro checkpoint \
   --manual "Manual validation:not_run" \
   --blocker "none" \
   --risk "Risk posture:attention:manual validation pending" \
+  --doing "S2:checkpoint Command" \
+  --done "S1:Checkpoint Renderer" \
   --recommended-next "Prepare the manual smoke route."
 ```
 
 Renders a compact Ariad/Maestro checkpoint orientation view. The first version is intentionally explicit: it does not infer roadmap state from project files yet. It exists to make the visualization grammar usable before richer state discovery is added.
 
 Evidence flags use `LABEL:STATE[:DETAIL]`. Valid states are `passed`, `attention`, `blocked`, `not_run`, and `unknown`.
+
+Flow card flags use `CODE:TITLE`. Available lane flags are `--backlog`, `--ready`, `--doing`, `--validate-card`, and `--done`. Repeat a flag to add multiple cards to the same lane.
 
 ### `status`
 

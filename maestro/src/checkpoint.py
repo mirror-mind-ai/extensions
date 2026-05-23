@@ -7,6 +7,8 @@ import sys
 from dataclasses import dataclass
 from typing import Literal
 
+from src.flow import build_flow_board_from_args, parse_flow_card, render_flow_board
+
 CheckpointName = Literal["plan", "implement", "validate", "review", "coherence", "commit"]
 ReleaseIntentKind = Literal["known", "emergent"]
 ValidationState = Literal["passed", "attention", "blocked", "not_run", "unknown"]
@@ -112,6 +114,7 @@ class CheckpointView:
     status_sentence: str | None = None
     release_intent: ReleaseIntent | None = None
     validation_evidence: ValidationEvidence | None = None
+    flow_board: object | None = None
     recommended_next: str | None = None
 
 
@@ -217,6 +220,10 @@ def render_checkpoint_view(view: CheckpointView) -> str:
         lines.append("")
         lines.extend(render_validation_panel(view.validation_evidence).rstrip().splitlines())
 
+    if view.flow_board:
+        lines.append("")
+        lines.extend(render_flow_board(view.flow_board).rstrip().splitlines())
+
     if view.recommended_next:
         lines.append("")
         lines.append("Recommended next")
@@ -266,6 +273,17 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
             risk=args.risk,
         )
 
+    flow_board = None
+    if any((args.backlog, args.ready, args.doing, args.validate_lane, args.done)):
+        flow_args = argparse.Namespace(
+            backlog=args.backlog,
+            ready=args.ready,
+            doing=args.doing,
+            validate=args.validate_lane,
+            done=args.done,
+        )
+        flow_board = build_flow_board_from_args(flow_args)
+
     return CheckpointView(
         checkpoint=args.checkpoint,
         work_map=WorkMap(
@@ -280,6 +298,7 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
         status_sentence=args.status_sentence,
         release_intent=release_intent,
         validation_evidence=validation_evidence,
+        flow_board=flow_board,
         recommended_next=args.recommended_next,
     )
 
@@ -314,6 +333,11 @@ def cmd_checkpoint(api, argv: list[str]) -> int:
     parser.add_argument("--manual", type=_parse_evidence_item, help="Manual evidence as LABEL:STATE[:DETAIL]")
     parser.add_argument("--blocker", help="Validation blocker text")
     parser.add_argument("--risk", type=_parse_evidence_item, help="Risk posture as LABEL:STATE[:DETAIL]")
+    parser.add_argument("--backlog", action="append", type=parse_flow_card, help="Backlog card as CODE:TITLE")
+    parser.add_argument("--ready", action="append", type=parse_flow_card, help="Ready card as CODE:TITLE")
+    parser.add_argument("--doing", action="append", type=parse_flow_card, help="Doing card as CODE:TITLE")
+    parser.add_argument("--validate-card", dest="validate_lane", action="append", type=parse_flow_card, help="Validate lane card as CODE:TITLE")
+    parser.add_argument("--done", action="append", type=parse_flow_card, help="Done card as CODE:TITLE")
     args = parser.parse_args(argv)
 
     view = build_checkpoint_view_from_args(args)

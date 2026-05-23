@@ -171,8 +171,8 @@ Stories:
 | Code | Story | Status | Notes |
 |------|-------|--------|-------|
 | CV2.E4.S1 | Flow Board Renderer | Done | Render `Backlog | Ready | Doing | Validate | Done` from explicit card state. |
-| CV2.E4.S2 | Explicit Card Input | Next | Accept explicit cards before roadmap parsing exists. |
-| CV2.E4.S3 | Maestro Example Board | Planned | Validate against Maestro's own visualization arc. |
+| CV2.E4.S2 | Explicit Card Input | Done | Accept explicit lane cards through checkpoint command flags before roadmap parsing exists. |
+| CV2.E4.S3 | Maestro Example Board | Done | Validated against Maestro's own visualization arc in an isolated smoke run. |
 
 ### CV2.E5: Coherence Matrix
 
