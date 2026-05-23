@@ -34,6 +34,23 @@ Updated the roadmap to mark CV2.E1.S1, S2, and S3 done and set CV2.E2 Checkpoint
 
 No runtime behavior changed.
 
+### 2026-05-23 — Checkpoint renderer implemented
+
+Implemented CV2.E2.S1 with a pure checkpoint renderer in `src/checkpoint.py` and unit coverage in `tests/test_checkpoint.py`.
+
+The renderer supports Bird's-Eye Map, yellow Story cards, Ariad Stage Ribbon, compact checkpoint sentence, optional known or emergent Release Intent, optional Recommended Next, and epic progress. It remains storage-free and CLI-free so the grammar is testable before runtime integration.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 70 tests passed.
+
+Also updated current development commands in briefing and development guide to use the Mirror dev clone at `/Users/alissonvale/Code/mirror-dev` instead of the personal production clone.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.

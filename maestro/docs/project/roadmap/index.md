@@ -128,8 +128,8 @@ Stories:
 
 | Code | Story | Status | Notes |
 |------|-------|--------|-------|
-| CV2.E2.S1 | Checkpoint Renderer | Planned | Pure renderer for Bird's-Eye Map, Ariad Stage Ribbon, compact checkpoint sentence, and optional release/story fields. |
-| CV2.E2.S2 | `checkpoint` Command | Planned | Candidate command: `memory ext maestro checkpoint --journey <slug>`. |
+| CV2.E2.S1 | Checkpoint Renderer | Done | Pure renderer for Bird's-Eye Map, Ariad Stage Ribbon, compact checkpoint sentence, optional release/story fields, and yellow Story cards. |
+| CV2.E2.S2 | `checkpoint` Command | Next | Candidate command: `memory ext maestro checkpoint --journey <slug>`. |
 | CV2.E2.S3 | Checkpoint Smoke and Docs | Planned | Validate with `--journey maestro`; document command usage and conscious limits. |
 
 Candidate command:

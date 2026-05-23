@@ -92,21 +92,21 @@ Its behavior should be:
 Run tests from the Mirror Mind repository with Mirror's source on `PYTHONPATH`:
 
 ```bash
-cd /Users/alissonvale/mirror
-PYTHONPATH=/Users/alissonvale/mirror/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
 ```
 
 Validate the extension monorepo when extension metadata changes:
 
 ```bash
-cd /Users/alissonvale/mirror
+cd /Users/alissonvale/Code/mirror-dev
 uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
 ```
 
 Useful smoke checks:
 
 ```bash
-cd /Users/alissonvale/mirror
+cd /Users/alissonvale/Code/mirror-dev
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro status --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro doctor --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro adopt --journey maestro --dry-run

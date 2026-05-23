@@ -21,21 +21,21 @@ The Navigator holds product judgment: what Maestro should automate, what should 
 Run Maestro tests from the Mirror Mind repository so imports resolve against the current Mirror source:
 
 ```bash
-cd /Users/alissonvale/mirror
-PYTHONPATH=/Users/alissonvale/mirror/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
 ```
 
 Validate the extension monorepo after metadata, skill, or runtime changes:
 
 ```bash
-cd /Users/alissonvale/mirror
+cd /Users/alissonvale/Code/mirror-dev
 uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
 ```
 
 Smoke-test readiness and adoption flows:
 
 ```bash
-cd /Users/alissonvale/mirror
+cd /Users/alissonvale/Code/mirror-dev
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro doctor --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro adopt --journey maestro --dry-run
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro update --journey maestro
