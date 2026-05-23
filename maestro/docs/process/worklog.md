@@ -12,6 +12,28 @@ This matters because Maestro is no longer only the deterministic operator for Ar
 
 No runtime behavior changed. This was a context and direction update.
 
+### 2026-05-23 — Ariad visualization implementation arc planned
+
+Updated the roadmap and product principles for Maestro's next arc: turning Mirror Mind self-update visualization field notes into a stable Ariad/Maestro product grammar.
+
+Created `docs/product/visualization-grammar.md` with the initial contract for Bird's-Eye Map, Ariad Stage Ribbon, Horizontal Flow Board, Transition View, Release Intent, Validation Panel, Coherence Matrix, compact checkpoint sentence, checkpoint-specific view composition, and first runtime slice exclusions.
+
+Planned the implementation sequence: visual grammar document, method boundary review, checkpoint view command, validation panel, flow board, and coherence matrix. Added the new product doc to README discovery.
+
+Recorded the Ariad/Maestro boundary decision: visualization starts in Maestro as operational rendering and dogfooding; method-level concepts promote to Ariad only after stabilization.
+
+Reworked the roadmap into explicit CV/Epic/Story taxonomy: CV1 Ariad Operational Foundation is done, CV2 Ariad/Maestro Visualization is active, CV3 Guided Reconciliation and Template Versioning is planned, and CV4 Cross-Runtime Ariad Operation stays on radar.
+
+No runtime behavior changed. This closes the planning slice before implementation.
+
+### 2026-05-23 — CV2.E1 visualization boundary review completed
+
+Completed CV2.E1.S3 by adding a component classification table to `docs/product/visualization-grammar.md`. Each visualization component is now explicitly classified as Ariad method, Maestro rendering, Maestro experiment, candidate upstream, or a mixed boundary.
+
+Updated the roadmap to mark CV2.E1.S1, S2, and S3 done and set CV2.E2 Checkpoint View MVP as the next implementation epic. This gives the runtime work a safe boundary: Maestro can render and dogfood visualizations without becoming the canonical method authority.
+
+No runtime behavior changed.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.

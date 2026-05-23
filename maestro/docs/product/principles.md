@@ -46,6 +46,12 @@ Maestro should stay small enough to explain.
 
 A few clear commands that reliably support adoption are better than a broad automation surface that users cannot predict.
 
+### Visualization as orientation
+
+Maestro visualizations should orient Driver/Navigator work instead of decorating it.
+
+A view is useful when it clarifies location, checkpoint, evidence, risk, coherence, or next movement. If a component does not help the Navigator decide, validate, review, or close work, it should not be added.
+
 ## Questions to Answer
 
 - What exact metadata should identify the Ariad version a project adopted?

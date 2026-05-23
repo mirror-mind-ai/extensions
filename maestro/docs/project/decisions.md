@@ -4,6 +4,25 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Visualization grammar starts in Maestro as operational rendering
+
+**Date:** 2026-05-23
+**Status:** Decided
+
+Decision: Ariad/Maestro visualization starts in Maestro as operational rendering and dogfooding, not as canonical Ariad method.
+
+Rationale: Ariad defines the method. Maestro materializes the method in operation. The visualization components discovered during Mirror Mind self-update work are real and useful, but they are still field-tested operational patterns rather than stable method law. Moving them into Ariad too early would freeze the method before enough usage has clarified what belongs to every Ariad implementation.
+
+Consequences:
+
+- Maestro may document and implement Bird's-Eye Map, Horizontal Flow Board, Transition View, Release Intent, Validation Panel, Coherence Matrix, compact checkpoint sentence, and health signals as runtime surfaces.
+- Ariad remains the authority for lifecycle concepts such as Driver/Navigator, checkpoints, validation, coherence, review, and record-history discipline.
+- Each visualization component should be classified as Ariad method, Maestro rendering, Maestro experiment, or candidate upstream before implementation.
+- Concepts are promoted to Ariad only after dogfooding shows they are method-level and runtime-independent.
+- Maestro docs must avoid implying that experimental rendering grammar is canonical Ariad.
+
+Routing rule: if a concept defines how human-agent work should happen regardless of runtime, it belongs in Ariad. If a behavior renders, stores, executes, reads, or guides Ariad inside Mirror, it belongs in Maestro. If the concept is still being discovered, keep it in Maestro as an operational experiment.
+
 ### Update remains report-only while reconciliation is guided
 
 **Date:** 2026-05-22

@@ -36,6 +36,11 @@ A useful boundary:
 
 > Ariad may govern local conduct. Project docs should record only truths about the project. Repository contract files should change only when repository adoption is explicitly desired.
 
+## Product Docs
+
+- `docs/product/principles.md` — product behavior principles for Maestro.
+- `docs/product/visualization-grammar.md` — Ariad/Maestro visualization grammar for Driver/Navigator orientation.
+
 ## Commands
 
 ### `status`
