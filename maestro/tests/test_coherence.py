@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.coherence import CoherenceItem, CoherenceMatrix
+from src.coherence import CoherenceItem, CoherenceMatrix, render_coherence_matrix
 
 
 def test_coherence_item_exposes_marker_for_each_state():
@@ -50,3 +50,44 @@ def test_unknown_state_exists_to_prevent_false_green():
 
     assert item.marker == "?"
     assert item.state == "unknown"
+
+
+def test_render_coherence_matrix_shows_title_and_all_states():
+    matrix = CoherenceMatrix(
+        items=(
+            CoherenceItem("Roadmap", "checked", "CV2.E5.S2 updated"),
+            CoherenceItem("Decisions", "attention", "No new decision needed"),
+            CoherenceItem("Worklog", "missing"),
+            CoherenceItem("Release notes", "not_applicable", "No release boundary"),
+            CoherenceItem("Internal links", "unknown"),
+        )
+    )
+
+    rendered = render_coherence_matrix(matrix)
+
+    assert "Coherence Matrix" in rendered
+    assert "✓ Roadmap - CV2.E5.S2 updated" in rendered
+    assert "⚠ Decisions - No new decision needed" in rendered
+    assert "✕ Worklog" in rendered
+    assert "- Release notes - No release boundary" in rendered
+    assert "? Internal links" in rendered
+
+
+def test_render_coherence_matrix_omits_detail_when_absent():
+    rendered = render_coherence_matrix(CoherenceMatrix(items=(CoherenceItem("Internal links", "unknown"),)))
+
+    assert "? Internal links\n" in rendered
+    assert "? Internal links -" not in rendered
+
+
+def test_render_coherence_matrix_does_not_include_global_status():
+    rendered = render_coherence_matrix(CoherenceMatrix(items=(CoherenceItem("Roadmap", "checked"),)))
+
+    assert "Status:" not in rendered
+    assert "ready" not in rendered.lower()
+
+
+def test_render_coherence_matrix_handles_empty_matrix_as_unknown():
+    rendered = render_coherence_matrix(CoherenceMatrix(items=()))
+
+    assert "? No coherence surfaces provided" in rendered

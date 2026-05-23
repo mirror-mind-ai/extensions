@@ -110,6 +110,7 @@ This table is the boundary review for CV2.E1.S3. It keeps Maestro from becoming 
 | Release Intent | Mixed, candidate upstream | Release awareness may belong to Ariad process; current card and labels remain Maestro rendering. |
 | Validation Panel | Mixed | Ariad requires validation evidence; Maestro renders evidence states. |
 | Coherence Matrix | Mixed | Ariad owns coherence check; Maestro renders project-specific surfaces and state. |
+| Roadmap Snapshot | Maestro rendering, candidate upstream | Hierarchical CV/Epic/Story roadmap view shown at story close; may become a canonical Ariad closeout view after dogfooding. |
 | Compact Checkpoint Sentence | Maestro rendering, candidate upstream | Useful checkpoint phrase; may promote if it becomes canonical transition language. |
 | Status/health signals | Maestro rendering | Compact runtime signals belong to Maestro and Mirror integration. |
 | Checkpoint-specific views | Maestro experiment, candidate upstream | The principle may prove method-level; current composition stays in Maestro. |
@@ -315,6 +316,47 @@ The matrix should allow `not applicable` and `unknown`. Not every story updates 
 
 Classification: mixed. Coherence check belongs to Ariad. Matrix rendering and project-specific row discovery belong in Maestro.
 
+### Roadmap Snapshot
+
+Purpose: show the hierarchical roadmap state at story close.
+
+Example:
+
+```text
+Roadmap Snapshot
+
+🟪 CV1  Ariad Operational Foundation                  ✅ Done
+🟪 CV2  Ariad/Maestro Visualization                   🟡 Active
+🟪 CV3  Guided Reconciliation and Template Versioning  ⚪ Planned
+🟪 CV4  Cross-Runtime Ariad Operation                 🔭 Radar
+
+🟪 CV2 Ariad/Maestro Visualization
+  🟦 E1 Visualization Grammar and Boundary            ✅ Done
+    🟨 S1 Visual Grammar Document                     ✅ Done
+    🟨 S2 Ariad/Maestro Boundary Record               ✅ Done
+    🟨 S3 Component Classification Review             ✅ Done
+
+  🟦 E5 Coherence Matrix                              🟡 Active
+    🟨 S1 Coherence Matrix Contract                   ✅ Done
+    🟨 S2 Coherence Matrix Renderer                   👉 Next
+    🟨 S3 Closeout View Integration                   ⚪ Planned
+```
+
+Use when:
+
+- closing a story;
+- showing what the completed story changed in the roadmap;
+- naming the next story after validation;
+- orienting the Navigator before commit.
+
+Legend:
+
+```text
+✅ Done   🟡 Active   👉 Next   ⚪ Planned   🔭 Radar
+```
+
+Classification: Maestro rendering, candidate upstream. The Ariad method owns roadmap taxonomy and closeout discipline; Maestro owns this snapshot rendering while it is being dogfooded.
+
 ### Compact Checkpoint Sentence
 
 Purpose: give the Navigator a short orientation sentence at checkpoint boundaries.
@@ -405,6 +447,7 @@ Classification: Maestro rendering over Ariad coherence discipline.
 Recommended components:
 
 - compact checkpoint sentence;
+- Roadmap Snapshot;
 - final diff summary;
 - validation evidence;
 - proposed commit message;
@@ -442,6 +485,7 @@ Not in the first slice:
 - rich TUI or web UI;
 - automatic commit, push, or release decisions;
 - claiming validation or coherence status without evidence;
+- automatic roadmap parsing for Roadmap Snapshot before the data model is justified;
 - promoting experimental visual grammar into Ariad before dogfooding.
 
 ## Open Questions

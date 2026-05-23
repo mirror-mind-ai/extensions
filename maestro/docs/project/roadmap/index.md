@@ -176,7 +176,7 @@ Stories:
 
 ### CV2.E5: Coherence Matrix
 
-**Status:** Planned
+**Status:** Active
 
 Purpose: support the closeout checkpoint by showing which project memory surfaces were checked.
 
@@ -185,8 +185,24 @@ Stories:
 | Code | Story | Status | Notes |
 |------|-------|--------|-------|
 | CV2.E5.S1 | Coherence Matrix Contract | Done | Define rows, states, unknown handling, and not-applicable handling. |
-| CV2.E5.S2 | Coherence Matrix Renderer | Next | Render roadmap, docs, worklog, decisions, journey, release notes, and links. |
-| CV2.E5.S3 | Closeout View Integration | Planned | Integrate matrix into the coherence checkpoint view. |
+| CV2.E5.S2 | Coherence Matrix Renderer | Done | Render roadmap, docs, worklog, decisions, journey, release notes, and links without global ready state. |
+| CV2.E5.S3 | Closeout View Integration | Next | Integrate matrix into the coherence checkpoint view. |
+
+### CV2.E6: Roadmap Snapshot
+
+**Status:** Planned
+
+Purpose: show the hierarchical CV/Epic/Story roadmap state at the end of each story.
+
+Stories:
+
+| Code | Story | Status | Notes |
+|------|-------|--------|-------|
+| CV2.E6.S1 | Roadmap Snapshot Contract | Planned | Define roadmap item/status model, emoji legend, and explicit-input boundary. |
+| CV2.E6.S2 | Roadmap Snapshot Renderer | Planned | Render CV/Epic/Story hierarchy with statuses and current next story. |
+| CV2.E6.S3 | End-of-Story Integration | Planned | Show Roadmap Snapshot at story close or commit checkpoint. |
+
+The first version should use explicit roadmap data rather than parsing arbitrary Markdown. Automatic roadmap parsing remains out of scope until the data model is justified.
 
 ---
 

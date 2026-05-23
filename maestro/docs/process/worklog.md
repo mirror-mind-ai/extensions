@@ -162,6 +162,29 @@ PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonva
 
 Result: 99 tests passed.
 
+### 2026-05-23 — Roadmap Snapshot added to visualization plan
+
+Added Roadmap Snapshot as a first-class Maestro visualization component and planned CV2.E6 for implementation after the Coherence Matrix arc.
+
+Roadmap Snapshot is the hierarchical CV/Epic/Story view shown at story close or commit checkpoint. It complements Flow Board: Flow Board shows local movement between lanes, while Roadmap Snapshot shows the broader map and next story.
+
+Updated the visualization grammar, roadmap, and commit-view composition. The first implementation should use explicit roadmap data rather than parsing arbitrary Markdown.
+
+### 2026-05-23 — Coherence matrix renderer added
+
+Completed CV2.E5.S2 with `render_coherence_matrix()` in `src/coherence.py`.
+
+The renderer shows each coherence surface with its explicit state marker and optional detail, handles empty matrices as unknown, and deliberately avoids rendering a global ready status.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+```
+
+Result: 103 tests passed.
+
 ### 2026-05-22 — Update command improved into actionable drift report
 
 `maestro update` now reports Ariad drift with a summary, missing local files, different files, local-only Ariad files, up-to-date files, recommended next actions, and a final status.
