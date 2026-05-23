@@ -57,10 +57,16 @@ uv run python -m memory ext maestro checkpoint \
   --story "S2 checkpoint Command" \
   --release-kind emergent \
   --status-sentence "S2 implemented and validated. We are at the validation checkpoint." \
+  --automated "Automated checks:passed:79 tests passed" \
+  --manual "Manual validation:not_run" \
+  --blocker "none" \
+  --risk "Risk posture:attention:manual validation pending" \
   --recommended-next "Prepare the manual smoke route."
 ```
 
 Renders a compact Ariad/Maestro checkpoint orientation view. The first version is intentionally explicit: it does not infer roadmap state from project files yet. It exists to make the visualization grammar usable before richer state discovery is added.
+
+Evidence flags use `LABEL:STATE[:DETAIL]`. Valid states are `passed`, `attention`, `blocked`, `not_run`, and `unknown`.
 
 ### `status`
 

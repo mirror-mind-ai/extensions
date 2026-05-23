@@ -111,6 +111,7 @@ class CheckpointView:
     work_map: WorkMap
     status_sentence: str | None = None
     release_intent: ReleaseIntent | None = None
+    validation_evidence: ValidationEvidence | None = None
     recommended_next: str | None = None
 
 
@@ -212,6 +213,10 @@ def render_checkpoint_view(view: CheckpointView) -> str:
         lines.append("")
         lines.extend(_render_release_intent(view.release_intent))
 
+    if view.validation_evidence:
+        lines.append("")
+        lines.extend(render_validation_panel(view.validation_evidence).rstrip().splitlines())
+
     if view.recommended_next:
         lines.append("")
         lines.append("Recommended next")
@@ -252,6 +257,15 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
             note=args.release_note,
         )
 
+    validation_evidence = None
+    if any((args.automated, args.manual, args.blocker, args.risk)):
+        validation_evidence = ValidationEvidence(
+            automated=args.automated,
+            manual=args.manual,
+            blocker=args.blocker,
+            risk=args.risk,
+        )
+
     return CheckpointView(
         checkpoint=args.checkpoint,
         work_map=WorkMap(
@@ -265,8 +279,17 @@ def build_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
         ),
         status_sentence=args.status_sentence,
         release_intent=release_intent,
+        validation_evidence=validation_evidence,
         recommended_next=args.recommended_next,
     )
+
+
+def _parse_evidence_item(value: str) -> EvidenceItem:
+    try:
+        label, state, *detail = value.split(":", maxsplit=2)
+        return EvidenceItem(label=label.strip(), state=state.strip(), detail=detail[0].strip() if detail else None)  # type: ignore[arg-type]
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("Evidence must use LABEL:STATE[:DETAIL]") from exc
 
 
 def cmd_checkpoint(api, argv: list[str]) -> int:
@@ -287,6 +310,10 @@ def cmd_checkpoint(api, argv: list[str]) -> int:
     parser.add_argument("--release-scope")
     parser.add_argument("--release-state")
     parser.add_argument("--release-note")
+    parser.add_argument("--automated", type=_parse_evidence_item, help="Automated evidence as LABEL:STATE[:DETAIL]")
+    parser.add_argument("--manual", type=_parse_evidence_item, help="Manual evidence as LABEL:STATE[:DETAIL]")
+    parser.add_argument("--blocker", help="Validation blocker text")
+    parser.add_argument("--risk", type=_parse_evidence_item, help="Risk posture as LABEL:STATE[:DETAIL]")
     args = parser.parse_args(argv)
 
     view = build_checkpoint_view_from_args(args)

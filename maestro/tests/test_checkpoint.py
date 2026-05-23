@@ -232,6 +232,55 @@ def test_render_validation_panel_shows_blocker_text():
     assert "Blocker: release not published" in rendered
 
 
+def test_render_checkpoint_view_includes_validation_panel():
+    view = CheckpointView(
+        checkpoint="validate",
+        work_map=sample_work_map(),
+        validation_evidence=ValidationEvidence(
+            automated=EvidenceItem("Automated checks", "passed", "79 tests passed"),
+            manual=EvidenceItem("Manual validation", "attention", "Navigator review pending"),
+            blocker="none",
+            risk=EvidenceItem("Risk posture", "attention", "manual validation pending"),
+        ),
+    )
+
+    rendered = render_checkpoint_view(view)
+
+    assert "Validation Panel" in rendered
+    assert "Automated checks: ✅ passed - 79 tests passed" in rendered
+    assert "Manual validation: ⚠ attention - Navigator review pending" in rendered
+    assert "Blocker: none" in rendered
+    assert "Risk posture: ⚠ attention - manual validation pending" in rendered
+
+
+def test_cmd_checkpoint_accepts_validation_evidence(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "--checkpoint",
+            "validate",
+            "--story",
+            "S3 Validation View Integration",
+            "--automated",
+            "Automated checks:passed:79 tests passed",
+            "--manual",
+            "Manual validation:not_run",
+            "--blocker",
+            "none",
+            "--risk",
+            "Risk posture:attention:manual validation pending",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Validation Panel" in out
+    assert "Automated checks: ✅ passed - 79 tests passed" in out
+    assert "Manual validation: ○ not run" in out
+    assert "Blocker: none" in out
+    assert "Risk posture: ⚠ attention - manual validation pending" in out
+
+
 def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):
     rc = cmd_checkpoint(
         ariad_api,
