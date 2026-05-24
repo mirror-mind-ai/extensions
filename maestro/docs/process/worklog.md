@@ -4,6 +4,14 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-24 — Pi runtime hook setup documented
+
+Documented the distribution gap for `pi/maestro-visibility.ts`: installing Maestro as a Mirror extension makes the Python commands and skill available, but Pi does not automatically load the TypeScript runtime hook from the extension source tree. Users must link or copy the file into a Pi auto-discovery path such as `~/.pi/agent/extensions/`, then run `/reload` and `/maestro on <journey>`.
+
+This matters because the structured checkpoint tool and `♪ Maestro · on` status line already exist, but they are invisible unless Pi loads the runtime extension. The docs now distinguish the local symlink workaround from a future first-class installer/runtime integration.
+
+Validation: documentation-only change; inspected README/SKILL setup instructions.
+
 ### 2026-05-24 — Pi structured checkpoint tool officialized
 
 Sandbox Pet Store testing showed that overlay guidance and `checkpoint quick` improved compliance but still depended on prompt interpretation. A local Pi hook spike proved two things: runtime injection is possible, but parsing assistant prose is still probabilistic and can misclassify checkpoints such as "advance without commit" as commit checkpoints.

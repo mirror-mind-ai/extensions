@@ -64,6 +64,8 @@ uv run python -m memory ext maestro checkpoint quick \
 
 The source distribution includes `pi/maestro-visibility.ts`, a Pi extension that registers the structured `maestro_checkpoint` tool. When available, prefer that tool over manual Markdown visuals or bash checkpoint calls. It renders with a single title such as `Maestro checkpoint: Coherence · CV1.E2.S1 Show cart` and uses its own tool shell to preserve Maestro readability in Pi.
 
+Installing the Mirror extension does not automatically load this Pi TypeScript hook. Pi discovers runtime extensions from paths such as `~/.pi/agent/extensions/` or `.pi/extensions/`. If the status line does not show `♪ Maestro · on`, link or copy `pi/maestro-visibility.ts` into one of those locations, run `/reload`, then run `/maestro on <journey>`.
+
 For story close, use `checkpoint=commit` even when no git commit will be created, and explain the reason in `statusSentence`. Include roadmap items when known so Roadmap Snapshot can render at story close.
 
 The Pi session command `/maestro on|off|status [journey]` controls whether Maestro injects checkpoint-protocol guidance. When enabled, the Pi status line shows `♪ Maestro · on`; when disabled, the structured tool remains available but no checkpoint instruction is injected.

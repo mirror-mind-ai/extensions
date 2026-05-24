@@ -88,6 +88,8 @@ uv run python -m memory ext maestro checkpoint quick \
 
 Maestro also ships a Pi extension source at `pi/maestro-visibility.ts`. When loaded by Pi, it registers a structured `maestro_checkpoint` tool. The tool lets the Driver emit checkpoint state as data instead of hand-drawing Maestro visuals or relying on bash command strings.
 
+Important: installing the Mirror extension with `memory extensions install maestro` installs Maestro's Python commands and skills, but it does **not** automatically load the Pi TypeScript extension. Pi only auto-discovers runtime extensions from locations such as `~/.pi/agent/extensions/` or a project's `.pi/extensions/`. Until Mirror/Pi grows first-class distribution for extension-provided Pi hooks, users must link or copy `pi/maestro-visibility.ts` into a Pi auto-discovery location.
+
 The Pi renderer uses a single compact title, for example:
 
 ```text
@@ -317,11 +319,36 @@ The command is report-only. It does not overwrite, merge, or apply patches. For 
 
 ## Install
 
+Install Maestro into a Mirror home:
+
 ```bash
 uv run python -m memory extensions install maestro \
   --extensions-root /path/to/mirror-extensions \
   --mirror-home ~/.mirror-minds/<user>
 ```
+
+Enable the optional Pi runtime visibility hook by linking the shipped Pi extension into Pi's auto-discovery directory:
+
+```bash
+mkdir -p ~/.pi/agent/extensions
+ln -sf /path/to/mirror-extensions/maestro/pi/maestro-visibility.ts \
+  ~/.pi/agent/extensions/maestro-visibility.ts
+```
+
+Then reload Pi and enable Maestro for the active journey:
+
+```text
+/reload
+/maestro on <journey-slug>
+```
+
+Expected status line:
+
+```text
+♪ Maestro · on
+```
+
+This symlink is local to one user's machine. New users must create it themselves unless their installer or runtime setup copies the Pi extension into an auto-discovery path.
 
 Run pending migrations after updating an installed extension:
 
