@@ -20,7 +20,8 @@ Additional hardening from the sandbox:
 - story close uses `checkpoint=commit` even when no git commit will be created, with the no-git/no-commit reason carried in `statusSentence`;
 - the Pi tool accepts roadmap items so Roadmap Snapshot can render at story close;
 - `/maestro on|off|status [journey]` controls whether checkpoint-protocol guidance is injected;
-- the Pi status line uses `♪ Maestro · on` / `♪ Maestro · off` for low-noise runtime visibility.
+- the Pi status line uses `♪ Maestro · on` / `♪ Maestro · off` for low-noise runtime visibility;
+- incomplete work-map calls skip silently so meta-conversations do not show placeholder checkpoint visuals.
 
 This matters because Maestro visibility is now a structured runtime protocol for Pi, not merely a prompt convention or a manually invoked bash command.
 

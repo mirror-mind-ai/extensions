@@ -18,6 +18,7 @@ Consequences:
 - The Pi extension registers `maestro_checkpoint` and renders it with a custom shell.
 - The extension does not infer checkpoints from assistant messages.
 - If the Driver forgets to call the tool, the runtime does not auto-correct by regex; the absence is visible but not treated as a runtime error.
+- If the Driver calls the tool without a complete CV/Epic/Story work map, the Pi renderer skips silently instead of showing placeholder `CV?`/`E?` visuals.
 - `/maestro on|off|status [journey]` controls whether checkpoint-protocol guidance is injected into the session.
 - Story close uses `checkpoint=commit` even when no git commit is created, with the no-git/no-commit reason in `statusSentence`.
 

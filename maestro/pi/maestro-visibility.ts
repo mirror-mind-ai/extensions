@@ -16,10 +16,12 @@ const MAX_SCAN_CHARS = 20_000;
 type Checkpoint = "plan" | "implement" | "validate" | "review" | "coherence" | "commit";
 
 type MaestroCheckpointDetails = {
-	checkpoint: Checkpoint;
+	checkpoint?: Checkpoint;
 	journey?: string;
 	story?: string;
-	visual: string;
+	visual?: string;
+	skipped?: boolean;
+	reason?: string;
 };
 
 function textFromContent(content: unknown): string {
@@ -96,6 +98,12 @@ function normalizeRoadmapItem(value: string): string {
 	return text;
 }
 
+function hasCompleteWorkMap(params: any): boolean {
+	return [params.cvCode, params.cvTitle, params.epicCode, params.epicTitle, params.story].every(
+		(value) => typeof value === "string" && value.trim().length > 0,
+	);
+}
+
 export default function (pi: ExtensionAPI) {
 	// Until Maestro is wired to Mirror journey context directly, keep a local
 	// journey hint so the structured tool can supply a default --journey value.
@@ -134,6 +142,13 @@ export default function (pi: ExtensionAPI) {
 		}),
 		renderShell: "self",
 		async execute(_toolCallId, params: any, signal) {
+			if (!hasCompleteWorkMap(params)) {
+				return {
+					content: [{ type: "text", text: "" }],
+					details: { skipped: true, reason: "incomplete_work_map" } satisfies MaestroCheckpointDetails,
+				};
+			}
+
 			const args = [
 				"run",
 				"python",
@@ -187,6 +202,7 @@ export default function (pi: ExtensionAPI) {
 		},
 
 		renderCall(args, theme) {
+			if (!hasCompleteWorkMap(args)) return new Text("", 0, 0);
 			const rawCheckpoint = typeof args.checkpoint === "string" ? args.checkpoint : "checkpoint";
 			const checkpoint = rawCheckpoint.charAt(0).toUpperCase() + rawCheckpoint.slice(1);
 			const story = typeof args.story === "string" ? args.story : "";
@@ -196,6 +212,7 @@ export default function (pi: ExtensionAPI) {
 
 		renderResult(result, _options, theme) {
 			const details = result.details as MaestroCheckpointDetails | undefined;
+			if (details?.skipped) return new Text("", 0, 0);
 			const visual = details?.visual ?? result.content.find((item: any) => item?.type === "text")?.text ?? "";
 			const lines = visual
 				.split("\n")

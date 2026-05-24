@@ -115,6 +115,8 @@ When enabled, the Pi status line shows:
 
 When disabled, the tool remains available but Maestro stops injecting the checkpoint-protocol instruction into the system prompt.
 
+The Pi tool silently skips rendering when the Driver calls it without a complete work map (`cvCode`, `cvTitle`, `epicCode`, `epicTitle`, and `story`). This avoids noisy Maestro blocks in meta-conversations or incomplete flow contexts.
+
 Evidence flags use `LABEL:STATE[:DETAIL]`. Valid states are `passed`, `attention`, `blocked`, `not_run`, and `unknown`.
 
 Flow card flags use `CODE:TITLE`. Available lane flags are `--backlog`, `--ready`, `--doing`, `--validate-card`, and `--done`. Repeat a flag to add multiple cards to the same lane.
