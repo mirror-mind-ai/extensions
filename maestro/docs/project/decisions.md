@@ -4,6 +4,22 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Checkpoint visualization starts with explicit input
+
+**Date:** 2026-05-23
+**Status:** Decided
+
+Decision: The first `checkpoint` visualization command accepts explicit input instead of inferring roadmap, validation, coherence, release, or progress state from project files.
+
+Rationale: Maestro must orient Driver/Navigator work without inventing project truth. Automatic parsing of arbitrary roadmap Markdown and implicit validation state would create false confidence before the data model is stable. Explicit input keeps the visualization useful while preserving Ariad's honesty principle: unknown state should remain unknown.
+
+Consequences:
+
+- `memory ext maestro checkpoint` renders supplied data and safe defaults only.
+- Roadmap Snapshot items use explicit `LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]` flags.
+- Validation evidence, flow-board cards, and coherence rows are supplied through explicit flags.
+- Future persistence or parsing should be added only after repeated dogfooding proves the model and failure modes.
+
 ### Visualization grammar starts in Maestro as operational rendering
 
 **Date:** 2026-05-23
@@ -47,7 +63,7 @@ Consequences:
 
 Decision: Maestro should provide a `status` command that closes install and update flows with an executable diagnostic.
 
-Rationale: Getting started should not end with an assumption that installation worked. The Raphael onboarding showed that real users need one final command that verifies the installed extension copy, source clone, Ariad root, migrations, and target journey readiness. It also revealed that reinstalling an extension over an older copy can leave stale files in the installed extension directory.
+Rationale: Getting started should not end with an assumption that installation worked. Private onboarding rehearsals showed that real users need one final command that verifies the installed extension copy, source clone, Ariad root, migrations, and target journey readiness. They also revealed that reinstalling an extension over an older copy can leave stale files in the installed extension directory.
 
 Consequences:
 
@@ -70,7 +86,7 @@ Consequences:
 - Ariad defaults should be treated as recommended starting preferences.
 - Maestro overlay configuration should make preferences explicit when possible.
 - A personal process habit should not be promoted to repository contract unless explicitly requested.
-- Overlay configuration supports commit, push, worklog, documentation detail, branch, and PR policies.
+- Overlay configuration supports repository contract, documentation update, checkpoint, validation, commit, push, worklog, documentation detail, branch, and PR policies.
 
 ### Ariad has repository adoption and workspace overlay modes
 
@@ -151,7 +167,7 @@ Maestro can compare local files against canonical templates, but does not yet tr
 **Status:** Open
 **Raised:** 2026-05-20
 
-`update` is report-only and `adopt` is safe-write only. A future reconciliation mode could propose patches, produce diffs, or guide the Driver through local adaptation. This should be informed by real adoption friction, especially the Raphael pilot.
+`update` is report-only and `adopt` is safe-write only. A future reconciliation mode could propose patches, produce diffs, or guide the Driver through local adaptation. This should be informed by real adoption friction from private pilots and public dogfooding.
 
 ### Extract shared overlay/project helpers
 

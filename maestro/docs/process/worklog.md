@@ -234,11 +234,13 @@ Result: 116 tests passed.
 
 Manual smoke installed the updated extension into an isolated temporary Mirror home, ran migrations, and executed `memory ext maestro checkpoint --checkpoint commit ...` with Roadmap Snapshot data. The command rendered CV2 with E5 done and E6 next, including progress bars.
 
-### 2026-05-23 — CV2 visualization context aligned
+### 2026-05-23 — CV2 visualization documentation closeout completed
 
-Aligned Maestro's roadmap statuses, project briefing, and journey context after completing the implemented CV2 visualization components.
+Aligned Maestro's roadmap statuses, project briefing, skill instructions, development guide, decisions log, and visualization grammar after completing the implemented CV2 visualization components.
 
-CV2 now has all planned visualization epics functionally done: visualization grammar and boundary, checkpoint view, validation panel, flow board, coherence matrix, and Roadmap Snapshot. The remaining work is coherence closeout and choosing the next arc: polish, Ariad promotion review, or CV3 guided reconciliation/versioning.
+CV2 is now documented as done: visualization grammar and boundary, checkpoint view, validation panel, flow board, coherence matrix, and Roadmap Snapshot are all implemented. The docs now describe `checkpoint` as the implemented runtime slice, record the explicit-input decision, and route future work toward visualization polish, Ariad promotion review, or CV3 guided reconciliation/versioning.
+
+Also scrubbed private pilot-specific names from public project documentation. Public docs may mention private pilots only generically when the learning matters.
 
 ### 2026-05-22 — Update command improved into actionable drift report
 
@@ -260,7 +262,7 @@ Result: 62 tests passed and `update --journey maestro` reported `Status: drift d
 
 Maestro now has a `status` command that verifies the installed extension copy, source clone, Ariad root, migrations, and optional journey readiness.
 
-This matters because onboarding and update guides should end with a concrete diagnostic, not an implicit assumption that setup worked. The Raphael onboarding rehearsal showed that clone-based updates need a final command that says whether Maestro is coherent end to end.
+This matters because onboarding and update guides should end with a concrete diagnostic, not an implicit assumption that setup worked. Private onboarding rehearsals showed that clone-based updates need a final command that says whether Maestro is coherent end to end.
 
 The command also detects stale installed files left behind by reinstalling over an older extension copy and suggests a clean removal plus reinstall when needed.
 
@@ -361,9 +363,9 @@ This matters because the naming is now coherent:
 
 ## Next
 
-Use the Raphael onboarding to observe real friction before expanding Maestro. Likely follow-ups:
+CV2 Ariad/Maestro Visualization is complete. The next movement is to choose the follow-up arc:
 
-- better `update` reconciliation;
-- template version awareness;
-- clearer not-ready reports;
-- stronger natural-language adoption guidance in `ext-maestro`.
+- polish the checkpoint visualization ergonomics and examples;
+- review which visual concepts should be proposed upstream to Ariad;
+- resume CV3 guided reconciliation and template versioning;
+- continue observing adoption friction through private pilots and public dogfooding without leaking pilot-specific details into public docs.

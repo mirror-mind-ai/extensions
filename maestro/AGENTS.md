@@ -23,6 +23,7 @@ Before meaningful work, read the files that exist in this project:
 - `docs/process/development-guide.md`
 - `docs/process/worklog.md`
 - `docs/product/principles.md`
+- `docs/product/visualization-grammar.md`
 
 If a listed file does not exist, continue with the available context and mention the gap when it matters.
 

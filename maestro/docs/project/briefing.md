@@ -18,13 +18,13 @@ It gives a Mirror user deterministic commands for:
 - closing install and update flows with an executable status check;
 - rendering checkpoint-oriented views for Driver/Navigator work.
 
-The current product arc extends the operational base into Ariad/Maestro visualization: helping the Driver and Navigator see where work is, which checkpoint is active, what evidence exists, what remains unresolved, which roadmap movement just happened, and which next movement preserves coherence.
+The completed CV2 product arc extended the operational base into Ariad/Maestro visualization: helping the Driver and Navigator see where work is, which checkpoint is active, what evidence exists, what remains unresolved, which roadmap movement just happened, and which next movement preserves coherence.
 
 ## Current Objective
 
-The current objective is to close the first Ariad/Maestro visualization capability and decide what should happen next.
+The current objective is to choose the follow-up arc after CV2 Ariad/Maestro Visualization.
 
-CV2 Ariad/Maestro Visualization is now functionally implemented. The work consolidated the visualization learnings produced while developing Mirror Mind and turned them into a stable Maestro runtime surface.
+CV2 consolidated visualization learnings produced while developing Mirror Mind and turned them into a stable Maestro runtime surface.
 
 Implemented visual components:
 
@@ -53,15 +53,13 @@ Implemented commands:
 - `overlay` — local Ariad workspace overlay for Mirror journeys;
 - `checkpoint` — explicit Ariad/Maestro checkpoint view renderer.
 
-The extension has been validated against real projects: Conjunto, Mirror Mind, Maestro itself, and the Diário/Raphael pilot. CV2 visualization work has test coverage and isolated smoke validation through temporary Mirror homes.
+The extension has been validated against public and private real projects, including Mirror Mind and Maestro itself. CV2 visualization work has test coverage and isolated smoke validation through temporary Mirror homes.
 
-The next slice should be a coherence closeout pass for CV2:
+The next slice should choose the follow-up arc after CV2:
 
-- align roadmap statuses;
-- confirm docs and README match implemented behavior;
-- decide whether any visual concepts should be proposed upstream to Ariad;
-- commit the context updates;
-- then choose the next CV or follow-up story.
+- polish visualization ergonomics;
+- review whether any visual concepts should be proposed upstream to Ariad;
+- or resume CV3 guided reconciliation and template versioning.
 
 ## Architecture Premises
 
@@ -132,7 +130,7 @@ Checkpoint smoke example:
 uv run python -m memory ext maestro checkpoint \
   --checkpoint commit \
   --story "S3 End-of-Story Integration" \
-  --roadmap "cv:CV2:Ariad/Maestro Visualization:active:6/6" \
+  --roadmap "cv:CV2:Ariad/Maestro Visualization:done:6/6" \
   --roadmap "epic:E6:Roadmap Snapshot:done:3/3" \
   --roadmap "story:S3:End-of-Story Integration:done"
 ```

@@ -1,15 +1,15 @@
 ---
 name: "ext-maestro"
-description: Mirror extension that operates the Ariad method (init, adopt, overlay, doctor, update)
+description: Mirror extension that operates the Ariad method (init, adopt, overlay, doctor, update, checkpoint)
 ---
 
 # Maestro Extension
 
 Maestro is the Mirror Mind extension that operates the [Ariad](https://github.com/mirror-mind-ai/ariad) method.
 
-Ariad is the canonical method. Maestro is how Mirror executes it: bootstrapping projects, adopting the method in existing ones, configuring local workspace overlays, diagnosing readiness for Builder Mode, and comparing local instances against canonical templates.
+Ariad is the canonical method. Maestro is how Mirror executes it: bootstrapping projects, adopting the method in existing ones, configuring local workspace overlays, diagnosing readiness for Builder Mode, comparing local instances against canonical templates, and rendering checkpoint-oriented views for Driver/Navigator work.
 
-Use this skill when the user asks to inspect whether a project is ready for Builder Mode, adopt Ariad in a project, initialize Ariad project docs, configure Ariad locally for a journey, or diagnose drift between a local Ariad instance and the canonical method.
+Use this skill when the user asks to inspect whether a project is ready for Builder Mode, adopt Ariad in a project, initialize Ariad project docs, configure Ariad locally for a journey, diagnose drift between a local Ariad instance and the canonical method, or render Ariad/Maestro checkpoint orientation.
 
 ## Contract Modes
 
@@ -32,6 +32,22 @@ The important boundary:
 - Repository contract files (`AGENTS.md`, `CLAUDE.md`, etc.) should change only when repository adoption is explicitly desired.
 
 ## Current commands
+
+### `checkpoint`
+
+Renders a compact Ariad/Maestro checkpoint orientation view from explicit input:
+
+```bash
+uv run python -m memory ext maestro checkpoint \
+  --journey <slug> \
+  --checkpoint validate \
+  --story "S2 Checkpoint Command" \
+  --automated "Automated checks:passed:tests passed" \
+  --manual "Manual validation:not_run" \
+  --recommended-next "Prepare the manual smoke route."
+```
+
+The command is intentionally explicit. It does not infer roadmap, validation, coherence, or release state without evidence.
 
 ### `status`
 

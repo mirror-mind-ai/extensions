@@ -13,15 +13,15 @@ The roadmap describes meaningful progress for the Maestro extension using the Ar
 | Code | Capability Value | Status |
 |------|------------------|--------|
 | CV1 | Ariad Operational Foundation | Done |
-| CV2 | Ariad/Maestro Visualization | Active |
+| CV2 | Ariad/Maestro Visualization | Done |
 | CV3 | Guided Reconciliation and Template Versioning | Planned |
 | CV4 | Cross-Runtime Ariad Operation | Radar |
 
 ## Current Focus
 
-The current focus is **CV2, Ariad/Maestro Visualization**: consolidate visualization as an operational product grammar while preserving the boundary between Ariad as method and Maestro as runtime implementation.
+The current focus is selecting the next arc after **CV2, Ariad/Maestro Visualization**.
 
-CV2 is functionally complete. The remaining closeout work is coherence, documentation polish, and deciding whether the visualization grammar should promote any method-level concepts upstream to Ariad.
+CV2 is complete: Maestro has a checkpoint-oriented visualization surface, explicit validation evidence, flow-board cards, coherence rows, and Roadmap Snapshot rendering. Next work should either polish the visualization ergonomics, review method-level concepts for Ariad promotion, or resume CV3 guided reconciliation and template versioning.
 
 ## Boundary Rule
 
@@ -79,14 +79,14 @@ Stories delivered:
 Stories delivered:
 
 - `status`: end-to-end install, source clone, Ariad root, migration, and readiness check.
-- Raphael onboarding hardening.
+- Private onboarding hardening.
 - Actionable `update` drift report.
 
 ---
 
 ## CV2: Ariad/Maestro Visualization
 
-**Status:** Active
+**Status:** Done
 
 CV2 turns visualization field notes from Mirror Mind self-update into a stable Maestro operational grammar.
 
@@ -125,13 +125,13 @@ Stories:
 | CV2.E2.S2 | `checkpoint` Command | Done | Added `memory ext maestro checkpoint --journey <slug>` with explicit checkpoint, work-map, release, status sentence, and recommended-next flags. |
 | CV2.E2.S3 | Checkpoint Smoke and Docs | Done | Validated in an isolated Mirror home; documented command usage and conscious limits. |
 
-Candidate command:
+Implemented command:
 
 ```bash
 uv run python -m memory ext maestro checkpoint --journey <slug>
 ```
 
-Candidate flags:
+Core flags:
 
 ```bash
 --checkpoint plan|implement|validate|review|coherence|commit
@@ -195,7 +195,7 @@ Stories:
 | CV2.E6.S2 | Roadmap Snapshot Renderer | Done | Render CV/Epic/Story hierarchy with progress bars, statuses, and current next story. |
 | CV2.E6.S3 | End-of-Story Integration | Done | Show Roadmap Snapshot at story close or commit checkpoint through `checkpoint --roadmap`. |
 
-The first version should use explicit roadmap data rather than parsing arbitrary Markdown. Automatic roadmap parsing remains out of scope until the data model is justified.
+The implemented version uses explicit roadmap data rather than parsing arbitrary Markdown. Automatic roadmap parsing remains out of scope until the data model is justified.
 
 ---
 
@@ -203,7 +203,7 @@ The first version should use explicit roadmap data rather than parsing arbitrary
 
 **Status:** Planned
 
-CV3 deepens Maestro's existing adoption/update path after visualization has stabilized.
+CV3 deepens Maestro's existing adoption/update path after the first visualization capability.
 
 Potential epics:
 
@@ -235,7 +235,7 @@ Potential directions:
 - Replaced old Maestro hello-world/coherence slice.
 - Published the extension under `mirror-mind-ai/extensions`.
 - Installed and validated locally.
-- Validated readiness on Conjunto, Diário/SNA, Mirror Mind, and Maestro.
+- Validated readiness on public and private real projects, including Mirror Mind and Maestro.
 - Added `status` as the getting-started close-loop command for Maestro installations.
 - Improved `update` into an actionable report-only drift report.
 - Reoriented Maestro toward Ariad/Maestro visualization as the next product arc.

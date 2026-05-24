@@ -455,17 +455,17 @@ Recommended components:
 
 Classification: Maestro rendering over Ariad record-history discipline.
 
-## First Runtime Slice
+## Implemented Runtime Slice
 
-The first implementation should be a small textual checkpoint view, not a full dashboard.
+The first runtime implementation is a small textual checkpoint view, not a full dashboard.
 
-Candidate command:
+Command:
 
 ```bash
 uv run python -m memory ext maestro checkpoint --journey <slug>
 ```
 
-Candidate flags:
+Core flags:
 
 ```bash
 --checkpoint plan|implement|validate|review|coherence|commit
@@ -473,11 +473,11 @@ Candidate flags:
 --release "v0.9.1 - Welcome Release Awareness"
 ```
 
-The first version may rely on explicit inputs. It should not require Maestro to parse every project's roadmap before producing useful orientation.
+The command also accepts explicit validation evidence, flow-board cards, coherence rows, and Roadmap Snapshot items. It deliberately relies on explicit inputs: Maestro should not parse arbitrary roadmaps or infer validation, coherence, release, or progress state until the underlying data model is justified.
 
 ## Conscious Exclusions
 
-Not in the first slice:
+Not in the current slice:
 
 - full roadmap parser;
 - automatic extraction of CV, epic, and story from arbitrary docs;
@@ -490,7 +490,6 @@ Not in the first slice:
 
 ## Open Questions
 
-- Should the first command be `checkpoint`, `board`, or a mode of `status`?
 - Where should explicit story/checkpoint state be stored if it needs to persist?
 - Should visualization be a command only, a context provider, or both?
 - Which parts belong in Ariad as method vocabulary and which belong in Maestro as runtime rendering?

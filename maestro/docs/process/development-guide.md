@@ -32,14 +32,23 @@ cd /Users/alissonvale/Code/mirror-dev
 uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
 ```
 
-Smoke-test readiness and adoption flows:
+Smoke-test readiness, adoption, overlay, and visualization flows:
 
 ```bash
 cd /Users/alissonvale/Code/mirror-dev
+ARIAD_ROOT=/Users/alissonvale/Code/ariad \
+MIRROR_EXTENSIONS_ROOT=/Users/alissonvale/Code/mirror-extensions \
+uv run python -m memory ext maestro status --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro doctor --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro adopt --journey maestro --dry-run
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro update --journey maestro
 uv run python -m memory ext maestro overlay status --journey mirror-mind
+uv run python -m memory ext maestro checkpoint \
+  --checkpoint commit \
+  --story "S3 End-of-Story Integration" \
+  --roadmap "cv:CV2:Ariad/Maestro Visualization:done:6/6" \
+  --roadmap "epic:E6:Roadmap Snapshot:done:3/3" \
+  --roadmap "story:S3:End-of-Story Integration:done"
 ```
 
 ## Verification
