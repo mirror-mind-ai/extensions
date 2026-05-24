@@ -32,6 +32,17 @@ cd /Users/alissonvale/Code/mirror-dev
 uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
 ```
 
+After Pi extension changes, reload Pi and smoke the runtime control surface:
+
+```text
+/reload
+/maestro status
+/maestro off
+/maestro on sandbox-pet-store
+```
+
+Expected status-line states are `♪ Maestro · on` and `♪ Maestro · off`.
+
 Smoke-test readiness, adoption, overlay, and visualization flows:
 
 ```bash
@@ -49,6 +60,7 @@ uv run python -m memory ext maestro checkpoint \
   --roadmap "cv:CV2:Ariad/Maestro Visualization:done:6/6" \
   --roadmap "epic:E6:Roadmap Snapshot:done:3/3" \
   --roadmap "story:S3:End-of-Story Integration:done"
+uv run python -m memory ext maestro simulate --story-index 0 --transcript --report
 ```
 
 ## Verification

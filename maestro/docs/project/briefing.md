@@ -22,9 +22,9 @@ The completed CV2 product arc extended the operational base into Ariad/Maestro v
 
 ## Current Objective
 
-The current objective is to choose the follow-up arc after CV2 Ariad/Maestro Visualization.
+The current objective is CV5 Maestro Simulation Harness and Builder Mode visual integration: exercise Maestro across synthetic and manual sandbox journeys, then make checkpoint visuals appear naturally during real Driver/Navigator work.
 
-CV2 consolidated visualization learnings produced while developing Mirror Mind and turned them into a stable Maestro runtime surface.
+CV2 consolidated visualization learnings produced while developing Mirror Mind and turned them into a stable Maestro runtime surface. CV5 now creates deterministic and manual fields for dogfooding that surface safely.
 
 Implemented visual components:
 
@@ -55,11 +55,7 @@ Implemented commands:
 
 The extension has been validated against public and private real projects, including Mirror Mind and Maestro itself. CV2 visualization work has test coverage and isolated smoke validation through temporary Mirror homes.
 
-The next slice should choose the follow-up arc after CV2:
-
-- polish visualization ergonomics;
-- review whether any visual concepts should be proposed upstream to Ariad;
-- or resume CV3 guided reconciliation and template versioning.
+The current slice is Builder Mode visual integration for Maestro checkpoints. The synthetic simulation harness exists, but the manual Sandbox Pet Store test showed the important gap: Ariad lifecycle behavior can work while Maestro visuals remain invisible. The next work is making compact checkpoint visuals appear naturally in real Driver/Navigator sessions through Maestro context guidance.
 
 ## Architecture Premises
 
@@ -70,6 +66,8 @@ The next slice should choose the follow-up arc after CV2:
 - Workspace overlay is local Mirror extension state and must not imply repository adoption.
 - Visualization should be derived from Ariad lifecycle state, project files, journey context, command results, or explicit user input. It should not invent project truth.
 - The first visualization implementation uses explicit input over inference. Automatic parsing of arbitrary roadmap Markdown remains out of scope until the data model is justified.
+- The simulation harness is a deterministic synthetic field. It may generate explicit checkpoint inputs, but it must not pretend to be evidence from a real project.
+- Builder Mode integration should make Maestro visuals visible without forcing fake state. Drivers should render only explicit known state and leave unknowns unknown.
 - The extension lives inside the monorepo at `maestro/`, with source under `maestro/src/` and tests under `maestro/tests/`.
 
 ## Product Premises
@@ -122,6 +120,7 @@ ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro sta
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro doctor --journey maestro
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro adopt --journey maestro --dry-run
 ARIAD_ROOT=/Users/alissonvale/Code/ariad uv run python -m memory ext maestro update --journey maestro
+uv run python -m memory ext maestro simulate --story-index 0 --transcript --report
 ```
 
 Checkpoint smoke example:
@@ -144,3 +143,4 @@ uv run python -m memory ext maestro checkpoint \
 - **Workspace overlay** — local Mirror extension state that applies Ariad to a journey without changing repository files.
 - **Visualization grammar** — the set of Ariad/Maestro views and signals that orient Driver/Navigator work across checkpoints.
 - **Roadmap Snapshot** — end-of-story CV/Epic/Story view with status markers and optional progress bars.
+- **Simulation harness** — synthetic Maestro exercise surface that generates checkpoint views from public-safe fake roadmaps without mutating real projects.

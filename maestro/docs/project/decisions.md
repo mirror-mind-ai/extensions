@@ -4,6 +4,23 @@ Incremental decisions made as the Maestro extension evolves.
 
 ## Completed Decisions
 
+### Pi checkpoint visibility uses a structured tool, not prose inference
+
+**Date:** 2026-05-24
+**Status:** Decided
+
+Decision: Maestro's Pi runtime visibility should be driven by the structured `maestro_checkpoint` tool and explicit checkpoint-protocol guidance, not by parsing assistant prose after the fact.
+
+Rationale: Sandbox testing showed that prompt guidance alone is inconsistent, but parsing normal conversation for checkpoint language creates false positives. Product discussion can mention validation, review, or pausing a story without reaching an Ariad checkpoint. The reliable boundary is structured data emitted through a tool call.
+
+Consequences:
+
+- The Pi extension registers `maestro_checkpoint` and renders it with a custom shell.
+- The extension does not infer checkpoints from assistant messages.
+- If the Driver forgets to call the tool, the runtime does not auto-correct by regex; the absence is visible but not treated as a runtime error.
+- `/maestro on|off|status [journey]` controls whether checkpoint-protocol guidance is injected into the session.
+- Story close uses `checkpoint=commit` even when no git commit is created, with the no-git/no-commit reason in `statusSentence`.
+
 ### Checkpoint visualization starts with explicit input
 
 **Date:** 2026-05-23

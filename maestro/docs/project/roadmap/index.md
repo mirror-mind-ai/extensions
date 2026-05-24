@@ -16,12 +16,15 @@ The roadmap describes meaningful progress for the Maestro extension using the Ar
 | CV2 | Ariad/Maestro Visualization | Done |
 | CV3 | Guided Reconciliation and Template Versioning | Planned |
 | CV4 | Cross-Runtime Ariad Operation | Radar |
+| CV5 | Maestro Simulation Harness | Active |
 
 ## Current Focus
 
 The current focus is selecting the next arc after **CV2, Ariad/Maestro Visualization**.
 
-CV2 is complete: Maestro has a checkpoint-oriented visualization surface, explicit validation evidence, flow-board cards, coherence rows, and Roadmap Snapshot rendering. Next work should either polish the visualization ergonomics, review method-level concepts for Ariad promotion, or resume CV3 guided reconciliation and template versioning.
+CV2 is complete: Maestro has a checkpoint-oriented visualization surface, explicit validation evidence, flow-board cards, coherence rows, and Roadmap Snapshot rendering.
+
+The current active arc is **CV5, Maestro Simulation Harness**: exercise Maestro across synthetic roadmap stories without opening a real project development cycle. This lets Maestro dogfood checkpoint visualization deterministically and safely.
 
 ## Boundary Rule
 
@@ -212,6 +215,53 @@ Potential epics:
 - Add template version awareness.
 - Improve not-ready reporting.
 - Refine `ext-maestro` for natural-language adoption guidance.
+
+---
+
+## CV5: Maestro Simulation Harness
+
+**Status:** Active
+
+CV5 provides a deterministic synthetic field for exercising Maestro without depending on a real project.
+
+### CV5.E1: Synthetic Checkpoint Runner
+
+**Status:** Done
+
+Purpose: generate explicit Maestro checkpoint views for a synthetic roadmap over multiple stories.
+
+Stories:
+
+| Code | Story | Status | Notes |
+|------|-------|--------|-------|
+| CV5.E1.S1 | Python Simulation Harness | Done | Added pure simulation models and a Sandbox Pet Store roadmap that generate real `CheckpointView` objects across plan, implement, validate, coherence, and commit checkpoints. |
+| CV5.E1.S2 | CLI Simulation Smoke | Done | Added `memory ext maestro simulate` to render one synthetic story or the full Sandbox Pet Store sequence through the extension command surface. |
+| CV5.E1.S3 | Driver/Navigator Transcript Simulation | Done | Added `--transcript` to wrap synthetic checkpoint views in a Driver/Navigator conversation. |
+| CV5.E1.S4 | Traversal Report | Done | Added `--report` to append a final project traversal summary with story outcomes, checkpoint coverage, evidence, flow, final state, and open questions. |
+| CV5.E1.S5 | Synthetic Project Fixture | Deferred | The manual sandbox produced more useful evidence than a generated fixture for now. |
+
+### CV5.E2: Builder Mode Visual Integration
+
+**Status:** Active
+
+Purpose: make Maestro visuals appear naturally during real Builder Mode checkpoints, not only through manual CLI use.
+
+Stories:
+
+| Code | Story | Status | Notes |
+|------|-------|--------|-------|
+| CV5.E2.S1 | Overlay Checkpoint Visual Guidance | Done | Updated the `ariad_workspace` context provider to instruct Drivers to include compact Maestro visual orientation blocks at non-trivial checkpoints and prefer `memory ext maestro checkpoint` when explicit state is available. |
+| CV5.E2.S2 | Canonical Ribbon Guidance | Done | Tightened overlay context after sandbox retest so Drivers use the canonical Maestro ribbon vocabulary instead of inventing alternate lifecycle labels. |
+| CV5.E2.S3 | Checkpoint-Specific Visual Minimums | Done | Tightened overlay context after retest so Drivers know a ribbon alone is insufficient and must include checkpoint-specific surfaces. |
+| CV5.E2.S4 | Quick Checkpoint Command | Done | Added `memory ext maestro checkpoint quick` to render checkpoint-specific minimum visual surfaces with safe unknown defaults. |
+| CV5.E2.S5 | Manual Sandbox Retest | Next | Re-run the Sandbox Pet Store manual session and observe whether Drivers call `checkpoint quick` instead of hand-composing unreliable visuals. |
+
+Boundaries:
+
+- no real project mutation;
+- no private pilot data;
+- no roadmap Markdown parsing;
+- no generated commits or pushes.
 
 ---
 

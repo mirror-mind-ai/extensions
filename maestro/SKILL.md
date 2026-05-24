@@ -1,6 +1,6 @@
 ---
 name: "ext-maestro"
-description: Mirror extension that operates the Ariad method (init, adopt, overlay, doctor, update, checkpoint)
+description: Mirror extension that operates the Ariad method (init, adopt, overlay, doctor, update, checkpoint, simulate)
 ---
 
 # Maestro Extension
@@ -47,7 +47,36 @@ uv run python -m memory ext maestro checkpoint \
   --recommended-next "Prepare the manual smoke route."
 ```
 
-The command is intentionally explicit. It does not infer roadmap, validation, coherence, or release state without evidence.
+The full command is intentionally explicit. It does not infer roadmap, validation, coherence, or release state without evidence.
+
+For Builder Mode checkpoints, prefer the low-friction form when the Driver needs reliable minimum visuals:
+
+```bash
+uv run python -m memory ext maestro checkpoint quick \
+  --journey <slug> \
+  --checkpoint validate \
+  --story "S1 Add item to cart"
+```
+
+`quick` renders safe checkpoint-specific surfaces with unknown defaults instead of relying on the Driver to hand-compose the visual grammar.
+
+### Pi structured checkpoint tool
+
+The source distribution includes `pi/maestro-visibility.ts`, a Pi extension that registers the structured `maestro_checkpoint` tool. When available, prefer that tool over manual Markdown visuals or bash checkpoint calls. It renders with a single title such as `Maestro checkpoint: Coherence · CV1.E2.S1 Show cart` and uses its own tool shell to preserve Maestro readability in Pi.
+
+For story close, use `checkpoint=commit` even when no git commit will be created, and explain the reason in `statusSentence`. Include roadmap items when known so Roadmap Snapshot can render at story close.
+
+The Pi session command `/maestro on|off|status [journey]` controls whether Maestro injects checkpoint-protocol guidance. When enabled, the Pi status line shows `♪ Maestro · on`; when disabled, the structured tool remains available but no checkpoint instruction is injected.
+
+### `simulate`
+
+Renders a synthetic Maestro run over a public-safe Sandbox Pet Store roadmap:
+
+```bash
+uv run python -m memory ext maestro simulate --all --transcript --report
+```
+
+Use this to exercise checkpoint visualization without opening real project development or using private pilot data. The simulation generates explicit synthetic state; it does not mutate project files or infer truth from Markdown. Use `--transcript` for a synthetic Driver/Navigator conversation and `--report` for the final traversal report.
 
 ### `status`
 

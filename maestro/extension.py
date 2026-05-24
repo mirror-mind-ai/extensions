@@ -8,6 +8,7 @@ from src.context import provide_ariad_workspace
 from src.doctor import cmd_doctor
 from src.init import cmd_init
 from src.overlay import cmd_overlay
+from src.simulation import cmd_simulate
 from src.status import cmd_status
 from src.update import cmd_update
 
@@ -49,5 +50,10 @@ def register(api: ExtensionAPI) -> None:
         "checkpoint",
         cmd_checkpoint,
         summary="Render an Ariad/Maestro checkpoint orientation view.",
+    )
+    api.register_cli(
+        "simulate",
+        cmd_simulate,
+        summary="Render a synthetic Maestro checkpoint simulation.",
     )
     api.register_mirror_context("ariad_workspace", provide_ariad_workspace)

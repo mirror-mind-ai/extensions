@@ -4,6 +4,69 @@ Operational progress for Maestro.
 
 ## Done
 
+### 2026-05-24 — Pi structured checkpoint tool officialized
+
+Sandbox Pet Store testing showed that overlay guidance and `checkpoint quick` improved compliance but still depended on prompt interpretation. A local Pi hook spike proved two things: runtime injection is possible, but parsing assistant prose is still probabilistic and can misclassify checkpoints such as "advance without commit" as commit checkpoints.
+
+Officialized the structured path by adding `pi/maestro-visibility.ts` to the Maestro source distribution. The Pi extension registers `maestro_checkpoint`, a structured tool that calls the Maestro checkpoint renderer from explicit data. Earlier parse-fallback and missing-tool guardrail experiments were removed because natural product conversation can mention validation/review language without reaching an Ariad checkpoint. The official Pi path is intentionally simple: provide the structured tool and checkpoint protocol instruction, but do not infer checkpoints from assistant prose.
+
+The Pi renderer now uses `renderShell: "self"` and a custom result renderer so Pi's default blue/green/red tool background does not obscure Maestro visuals. It also uses a single title in the tool call row, for example `Maestro checkpoint: Coherence · CV1.E2.S1 Show cart`, and suppresses the duplicate `Maestro checkpoint` title inside the result body.
+
+Additional hardening from the sandbox:
+
+- evidence is only passed to the CLI for validation and commit checkpoints;
+- coherence entries accept natural strings and normalize to `SURFACE:STATE[:DETAIL]`;
+- the system instruction says not to hand-draw Maestro visuals;
+- story close uses `checkpoint=commit` even when no git commit will be created, with the no-git/no-commit reason carried in `statusSentence`;
+- the Pi tool accepts roadmap items so Roadmap Snapshot can render at story close;
+- `/maestro on|off|status [journey]` controls whether checkpoint-protocol guidance is injected;
+- the Pi status line uses `♪ Maestro · on` / `♪ Maestro · off` for low-noise runtime visibility.
+
+This matters because Maestro visibility is now a structured runtime protocol for Pi, not merely a prompt convention or a manually invoked bash command.
+
+### 2026-05-23 — Builder Mode checkpoint visual guidance added
+
+Manual Sandbox Pet Store testing showed that the Driver can follow Ariad correctly while Maestro remains visually invisible. The Driver planned, implemented, validated, reviewed, documented, and closed a story, but did not naturally render Bird's-Eye Map, Ariad Stage Ribbon, Validation Panel, Coherence Matrix, Roadmap Snapshot, or call `memory ext maestro checkpoint`.
+
+Updated the `ariad_workspace` context provider to make checkpoint visualization explicit in Builder Mode overlay context. The provider now tells Drivers to use a command-first rule for non-trivial checkpoints: run `memory ext maestro checkpoint` when explicit state is available, and otherwise use Maestro's exact fallback grammar rather than inventing a new visual language.
+
+A second manual sandbox pass showed the guidance worked partially: Maestro orientation appeared, but the Driver invented a custom Stage Ribbon with labels such as Read and Orient, Test and Validate, Document, and Record History. Tightened the overlay context again to require the canonical ribbon vocabulary: Plan, Implement, Validate, Review, Coherence, Commit with `✓`, `◉`, and `○` markers.
+
+A third observation showed another partial success: the Driver used the canonical ribbon, but rendered no other checkpoint visual surfaces. Tightened the overlay again so the context says a ribbon alone is not enough for non-trivial checkpoints and lists checkpoint-specific minimums: Bird's-Eye Map for plan, Validation Panel for validate, Coherence Matrix for coherence, and Roadmap Snapshot for story close. Added fallback templates for those surfaces when the checkpoint command is not practical.
+
+The stronger prompt guidance still leaves too much discretion, so Maestro now has a lower-friction deterministic command: `memory ext maestro checkpoint quick`. The quick form renders checkpoint-specific minimum surfaces with safe unknown defaults: Validation Panel for validate, Coherence Matrix for coherence, and Validation Panel plus Coherence Matrix plus Roadmap Snapshot for commit. The overlay now points Drivers to `checkpoint quick` examples instead of asking them to hand-compose every visual.
+
+This matters because a CLI command alone is not enough if it is too cumbersome to call. Maestro must be present in the conduct of Builder Mode sessions through a command that is easier than improvising the visual language.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/test_context.py
+```
+
+Result: 4 tests passed.
+
+### 2026-05-23 — Maestro simulation harness started
+
+Started CV5 Maestro Simulation Harness with a pure Python synthetic checkpoint runner, an extension command smoke surface, transcript rendering, and a final traversal report.
+
+Added `src/simulation.py` with public-safe Sandbox Pet Store simulation data, story-run generation, roadmap-run generation, rendered simulation frames, and `memory ext maestro simulate`. The harness produces real `CheckpointView` objects across plan, implement, validate, coherence, and commit checkpoints, including Validation Panel, Flow Board, Coherence Matrix, and Roadmap Snapshot data where appropriate.
+
+The command now supports `--transcript` to wrap Maestro checkpoints in a synthetic Driver/Navigator conversation, and `--report` to append a final traversal report with story outcomes, checkpoint coverage, evidence, flow, final state, and open questions.
+
+This matters because Maestro can now be exercised across multiple synthetic roadmap stories without opening real project development, mutating project files, or leaking private pilot data. The harness preserves the explicit-input design: it generates supplied state for visualization instead of inferring truth from Markdown.
+
+Validation:
+
+```bash
+cd /Users/alissonvale/Code/mirror-dev
+PYTHONPATH=/Users/alissonvale/Code/mirror-dev/src uv run pytest /Users/alissonvale/Code/mirror-extensions/maestro/tests/
+uv run python -m memory extensions validate --extensions-root /Users/alissonvale/Code/mirror-extensions
+```
+
+Result: 126 tests passed and 3 extensions validated.
+
 ### 2026-05-23 — Maestro briefing pivoted toward Ariad visualization
 
 Reoriented Maestro's project briefing and journey path around the next product arc: consolidating Ariad/Maestro visualization learnings from the recent Mirror Mind self-update and release work.
@@ -363,9 +426,9 @@ This matters because the naming is now coherent:
 
 ## Next
 
-CV2 Ariad/Maestro Visualization is complete. The next movement is to choose the follow-up arc:
+CV5 Maestro Simulation Harness is active. Next likely movements:
 
-- polish the checkpoint visualization ergonomics and examples;
-- review which visual concepts should be proposed upstream to Ariad;
-- resume CV3 guided reconciliation and template versioning;
-- continue observing adoption friction through private pilots and public dogfooding without leaking pilot-specific details into public docs.
+- bind and enable the Ariad workspace overlay for the Sandbox Pet Store journey;
+- restart the manual sandbox session and observe whether Maestro visuals appear organically at checkpoints;
+- inspect `simulate --all --transcript --report` as a product artifact and identify visualization polish;
+- decide whether simulation should remain a developer/dogfooding command or become part of the public demo story.

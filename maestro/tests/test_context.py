@@ -48,6 +48,24 @@ def test_ariad_workspace_context_renders_overlay_contract(ariad_api, tmp_path: P
     assert "commit after a coherent story" in text
     assert "ask before pushing" in text
     assert "do not edit AGENTS.md" in text
+    assert "Maestro checkpoint visualization" in text
+    assert "command-first rule" in text
+    assert "uv run python -m memory ext maestro checkpoint" in text
+    assert "Ariad: ✓ Plan | ◉ Implement | ○ Validate | ○ Review | ○ Coherence | ○ Commit" in text
+    assert "do not use alternate lifecycle labels" in text
+    assert "Read and Orient" in text
+    assert "a ribbon alone is not enough" in text
+    assert "Plan checkpoint minimum: Bird's-Eye Map plus Ariad Stage Ribbon" in text
+    assert "Validate checkpoint minimum: Ariad Stage Ribbon plus Validation Panel" in text
+    assert "Coherence checkpoint minimum: Ariad Stage Ribbon plus Coherence Matrix" in text
+    assert "Commit/story-close checkpoint minimum: Ariad Stage Ribbon plus Roadmap Snapshot" in text
+    assert "Fallback visual templates" in text
+    assert "Validation Panel" in text
+    assert "Coherence Matrix" in text
+    assert "Roadmap Snapshot" in text
+    assert "do not invent validation" in text
+    assert "Low-friction command examples" in text
+    assert "checkpoint quick --journey <journey> --checkpoint validate" in text
     assert str(ariad_root.resolve()) in text
 
 

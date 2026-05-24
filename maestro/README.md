@@ -71,7 +71,49 @@ uv run python -m memory ext maestro checkpoint \
   --recommended-next "Prepare the manual smoke route."
 ```
 
-Renders a compact Ariad/Maestro checkpoint orientation view. The first version is intentionally explicit: it does not infer roadmap state from project files yet. It exists to make the visualization grammar usable before richer state discovery is added.
+Renders a compact Ariad/Maestro checkpoint orientation view. The full form is intentionally explicit: it does not infer roadmap state from project files yet. It exists to make the visualization grammar usable before richer state discovery is added.
+
+For lower-friction Builder Mode use, `quick` renders checkpoint-specific minimum surfaces with safe unknown defaults:
+
+```bash
+uv run python -m memory ext maestro checkpoint quick \
+  --journey sandbox-pet-store \
+  --checkpoint validate \
+  --story "S1 Add item to cart"
+```
+
+`quick` always renders the Bird's-Eye Map and canonical Ariad Stage Ribbon. It also adds Validation Panel for `validate`, Coherence Matrix for `coherence`, and Validation Panel, Coherence Matrix, and Roadmap Snapshot for `commit`.
+
+### Pi structured checkpoint tool
+
+Maestro also ships a Pi extension source at `pi/maestro-visibility.ts`. When loaded by Pi, it registers a structured `maestro_checkpoint` tool. The tool lets the Driver emit checkpoint state as data instead of hand-drawing Maestro visuals or relying on bash command strings.
+
+The Pi renderer uses a single compact title, for example:
+
+```text
+Maestro checkpoint: Coherence · CV1.E2.S1 Show cart
+```
+
+and renders the Maestro view with its own shell so Pi's default success/error background does not obscure the visual grammar. The structured tool path is the intended protocol; the Pi extension does not infer checkpoints by parsing assistant prose.
+
+For story close, the Pi tool uses `checkpoint=commit` even when no git commit will be created. The Driver should explain the reason in `statusSentence` (for example, no `.git` repository or Navigator requested no commit). When known, pass `roadmap` items so the `Roadmap Snapshot` appears at story close.
+
+Use the Pi command to control the protocol in a session:
+
+```text
+/maestro on
+/maestro off
+/maestro status
+/maestro on sandbox-pet-store
+```
+
+When enabled, the Pi status line shows:
+
+```text
+♪ Maestro · on
+```
+
+When disabled, the tool remains available but Maestro stops injecting the checkpoint-protocol instruction into the system prompt.
 
 Evidence flags use `LABEL:STATE[:DETAIL]`. Valid states are `passed`, `attention`, `blocked`, `not_run`, and `unknown`.
 
@@ -80,6 +122,16 @@ Flow card flags use `CODE:TITLE`. Available lane flags are `--backlog`, `--ready
 Coherence flags use `SURFACE:STATE[:DETAIL]`. Valid states are `checked`, `attention`, `missing`, `not_applicable`, and `unknown`. Repeat `--coherence` for multiple rows.
 
 Roadmap flags use `LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]`. Valid levels are `cv`, `epic`, and `story`. Valid statuses are `done`, `active`, `next`, `planned`, `radar`, and `blocked`. Progress is optional and should only be supplied when the counts are trustworthy.
+
+### `simulate`
+
+```bash
+uv run python -m memory ext maestro simulate --all
+```
+
+Renders a synthetic Maestro checkpoint run over a public-safe Sandbox Pet Store roadmap. This is a deterministic exercise surface for visualization: it generates explicit synthetic state for plan, implement, validate, coherence, and commit checkpoints without mutating project files, parsing roadmap Markdown, or using private pilot data.
+
+Use `--story-index N` to render a single zero-based story and `--all` to render every synthetic story. Add `--transcript` to wrap checkpoint views in a synthetic Driver/Navigator conversation, and `--report` to append a final traversal report.
 
 ### `status`
 
@@ -216,6 +268,8 @@ Overlay policies:
 
 When active, `memory build load <journey>` already receives the overlay instructions because Mirror's extension context mechanism injects capabilities bound to the active journey.
 
+The overlay context also instructs Builder Mode to make Maestro visuals present at non-trivial checkpoints. Drivers should follow a command-first rule: run `memory ext maestro checkpoint` when explicit state is available, and use Maestro's exact fallback grammar when a command is not practical. The Ariad Stage Ribbon uses only `Plan`, `Implement`, `Validate`, `Review`, `Coherence`, and `Commit` with `✓`, `◉`, and `○` markers. A ribbon alone is not enough for non-trivial checkpoints: plan should include Bird's-Eye Map, validate should include Validation Panel, coherence should include Coherence Matrix, and story close should include Roadmap Snapshot. Unknown state should stay unknown rather than being invented for display.
+
 ### `doctor`
 
 ```bash
@@ -278,6 +332,7 @@ uv run python -m memory ext maestro migrate
 Implemented:
 
 - `checkpoint` — textual Ariad/Maestro checkpoint orientation view
+- `simulate` — synthetic checkpoint simulation over a public-safe roadmap
 - `status` — end-to-end install, source clone, Ariad root, migration, and readiness check
 - `doctor` — read-only readiness check across repository adoption and workspace overlay
 - `adopt` — copy missing templates without overwriting existing files

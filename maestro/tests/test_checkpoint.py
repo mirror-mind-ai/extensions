@@ -437,3 +437,107 @@ def test_cmd_checkpoint_accepts_known_release(ariad_api, capsys):
     assert "[known] v0.1.0 - Ariad Visualization" in out
     assert "Scope: CV2.E2" in out
     assert "State: building" in out
+
+
+def test_cmd_checkpoint_quick_plan_renders_minimum_orientation(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "quick",
+            "--checkpoint",
+            "plan",
+            "--cv-code",
+            "CV1",
+            "--cv-title",
+            "Cart Flow",
+            "--epic-code",
+            "E1",
+            "--epic-title",
+            "Basic Cart Behavior",
+            "--story",
+            "S1 Add item to cart",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "🟪[CV1]  Cart Flow" in out
+    assert "  🟦[E1]   Basic Cart Behavior" in out
+    assert "    🟨[S1]  Add item to cart" in out
+    assert "Ariad: ◉ Plan | ○ Implement | ○ Validate | ○ Review | ○ Coherence | ○ Commit" in out
+    assert "Validation Panel" not in out
+
+
+def test_cmd_checkpoint_quick_validate_renders_unknown_validation_panel(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "quick",
+            "--checkpoint",
+            "validate",
+            "--story",
+            "S1 Add item to cart",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Ariad: ✓ Plan | ✓ Implement | ◉ Validate | ○ Review | ○ Coherence | ○ Commit" in out
+    assert "Validation Panel" in out
+    assert "Automated checks: ? unknown" in out
+    assert "Manual validation: ? unknown" in out
+    assert "Blocker: none" in out
+    assert "Risk posture: ? unknown" in out
+
+
+def test_cmd_checkpoint_quick_coherence_renders_unknown_coherence_matrix(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "quick",
+            "--checkpoint",
+            "coherence",
+            "--story",
+            "S1 Add item to cart",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Ariad: ✓ Plan | ✓ Implement | ✓ Validate | ✓ Review | ◉ Coherence | ○ Commit" in out
+    assert "Coherence Matrix" in out
+    assert "? Roadmap" in out
+    assert "? Decisions" in out
+    assert "? Worklog" in out
+    assert "? README" in out
+
+
+def test_cmd_checkpoint_quick_commit_renders_story_close_surfaces(ariad_api, capsys):
+    rc = cmd_checkpoint(
+        ariad_api,
+        [
+            "quick",
+            "--checkpoint",
+            "commit",
+            "--cv-code",
+            "CV1",
+            "--cv-title",
+            "Cart Flow",
+            "--epic-code",
+            "E1",
+            "--epic-title",
+            "Basic Cart Behavior",
+            "--story",
+            "S1 Add item to cart",
+        ],
+    )
+
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "Ariad: ✓ Plan | ✓ Implement | ✓ Validate | ✓ Review | ✓ Coherence | ◉ Commit" in out
+    assert "Validation Panel" in out
+    assert "Coherence Matrix" in out
+    assert "Roadmap Snapshot" in out
+    assert "🟪 CV1  Cart Flow  🟡 Active" in out
+    assert "🟦 E1  Basic Cart Behavior  🟡 Active" in out
+    assert "🟨 S1  Add item to cart  🟡 Active" in out

@@ -365,8 +365,90 @@ def _parse_roadmap_item(value: str) -> RoadmapItem:
         raise argparse.ArgumentTypeError("Roadmap items must use LEVEL:CODE:TITLE:STATUS[:DONE/TOTAL]") from exc
 
 
+def build_quick_checkpoint_view_from_args(args: argparse.Namespace) -> CheckpointView:
+    """Build a checkpoint view with checkpoint-specific minimum visual surfaces."""
+
+    story_code, story_title = _split_code_and_title(args.story, default_code="S?")
+    validation_evidence = None
+    if args.checkpoint in {"validate", "commit"}:
+        validation_evidence = ValidationEvidence(blocker="none")
+
+    coherence_matrix = None
+    if args.checkpoint in {"coherence", "commit"}:
+        coherence_matrix = CoherenceMatrix(
+            items=(
+                CoherenceItem("Roadmap", "unknown"),
+                CoherenceItem("Decisions", "unknown"),
+                CoherenceItem("Worklog", "unknown"),
+                CoherenceItem("README", "unknown"),
+            )
+        )
+
+    roadmap_snapshot = None
+    if args.checkpoint == "commit":
+        roadmap_snapshot = RoadmapSnapshot(
+            items=(
+                RoadmapItem(
+                    level="cv",
+                    code=args.cv_code,
+                    title=args.cv_title,
+                    status="active",
+                    children=(
+                        RoadmapItem(
+                            level="epic",
+                            code=args.epic_code,
+                            title=args.epic_title,
+                            status="active",
+                            children=(RoadmapItem("story", story_code, story_title, "active"),),
+                        ),
+                    ),
+                ),
+            )
+        )
+
+    return CheckpointView(
+        checkpoint=args.checkpoint,
+        work_map=WorkMap(
+            cv_code=args.cv_code,
+            cv_title=args.cv_title,
+            epic_code=args.epic_code,
+            epic_title=args.epic_title,
+            story_code=story_code,
+            story_title=story_title,
+        ),
+        status_sentence=args.status_sentence,
+        validation_evidence=validation_evidence,
+        coherence_matrix=coherence_matrix,
+        roadmap_snapshot=roadmap_snapshot,
+        recommended_next=args.recommended_next,
+    )
+
+
+def cmd_checkpoint_quick(api, argv: list[str]) -> int:
+    """Render a low-friction checkpoint view with minimum visual surfaces."""
+
+    parser = argparse.ArgumentParser(description="Render a quick Ariad/Maestro checkpoint view")
+    parser.add_argument("--journey", help="Mirror journey slug for display/context only.")
+    parser.add_argument("--checkpoint", choices=_CHECKPOINTS, required=True)
+    parser.add_argument("--cv-code", default="CV?")
+    parser.add_argument("--cv-title", default="Current Capability Value")
+    parser.add_argument("--epic-code", default="E?")
+    parser.add_argument("--epic-title", default="Current Epic")
+    parser.add_argument("--story", default="S? Current Story", help='Story code and title, for example "S1 Add item to cart"')
+    parser.add_argument("--status-sentence")
+    parser.add_argument("--recommended-next")
+    args = parser.parse_args(argv)
+
+    view = build_quick_checkpoint_view_from_args(args)
+    sys.stdout.write(render_checkpoint_view(view))
+    return 0
+
+
 def cmd_checkpoint(api, argv: list[str]) -> int:
     """Render an Ariad/Maestro checkpoint orientation view."""
+    if argv and argv[0] == "quick":
+        return cmd_checkpoint_quick(api, argv[1:])
+
     parser = argparse.ArgumentParser(description="Render an Ariad/Maestro checkpoint view")
     parser.add_argument("--journey", help="Mirror journey slug. Reserved for future context lookup.")
     parser.add_argument("--checkpoint", choices=_CHECKPOINTS, required=True)
