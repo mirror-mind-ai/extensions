@@ -25,6 +25,15 @@ Additional hardening from the sandbox:
 
 This matters because Maestro visibility is now a structured runtime protocol for Pi, not merely a prompt convention or a manually invoked bash command.
 
+Session handoff:
+
+- committed and pushed `029e45c Make Maestro checkpoint visibility structured`;
+- committed and pushed `1c75935 Suppress incomplete Maestro checkpoint visuals`;
+- full Sandbox Pet Store CV1 dogfood succeeded from reset to CV1 close;
+- `checkpoint=commit` worked as story-close without git and rendered Roadmap Snapshot;
+- normal product conversation no longer triggers noisy Maestro visuals after incomplete work-map skip;
+- future Builder session should start from `mirror-extensions` `main` at `1c75935` or later.
+
 ### 2026-05-23 — Builder Mode checkpoint visual guidance added
 
 Manual Sandbox Pet Store testing showed that the Driver can follow Ariad correctly while Maestro remains visually invisible. The Driver planned, implemented, validated, reviewed, documented, and closed a story, but did not naturally render Bird's-Eye Map, Ariad Stage Ribbon, Validation Panel, Coherence Matrix, Roadmap Snapshot, or call `memory ext maestro checkpoint`.
